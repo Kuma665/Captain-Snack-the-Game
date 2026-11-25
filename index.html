@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-25d',
+ ver:'v2026-11-25e',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
  err:'Fehler',line:'Zeile'
@@ -53,10 +53,10 @@ body.touch #hint{display:none}
 @media (pointer:coarse) and (orientation:portrait){#rot{display:block}}
 @media (orientation:landscape){h1,#rot,#hint{display:none}body{gap:6px}#wrap{width:min(100%,calc((100vh - 30px)*2.25))}}
 :fullscreen body,:-webkit-full-screen body{background:#000}
-#mute,#pause,#fs{display:none;position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:calc(8px + env(safe-area-inset-right,0px));width:44px;height:44px;border:none;border-radius:50%;background:radial-gradient(circle at 35% 28%,#ffe48f,#d29a22 72%);color:#2b1a12;font-size:20px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35),0 0 0 3px rgba(20,13,11,.55),0 4px 0 #7e5a0e,0 8px 14px -3px rgba(0,0,0,.5);z-index:5;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-#pause{font:bold 16px Georgia,serif}
-#mute{right:calc(60px + env(safe-area-inset-right,0px))}
-#fs{font:bold 22px/1 "Segoe UI Symbol","Noto Sans Symbols 2",sans-serif}
+#mute,#pause,#fs{display:none;position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:calc(8px + env(safe-area-inset-right,0px));--bs:max(44px,10.7vh);width:var(--bs);height:var(--bs);border:none;border-radius:50%;background:radial-gradient(circle at 35% 28%,#ffe48f,#d29a22 72%);color:#2b1a12;font-size:calc(var(--bs)*.45);box-shadow:inset 0 0 0 2px rgba(255,255,255,.35),0 0 0 3px rgba(20,13,11,.55),0 4px 0 #7e5a0e,0 8px 14px -3px rgba(0,0,0,.5);z-index:5;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#pause{font:bold calc(var(--bs)*.36) Georgia,serif}
+#mute{right:calc(16px + var(--bs) + env(safe-area-inset-right,0px))}
+#fs{font:bold calc(var(--bs)*.5)/1 "Segoe UI Symbol","Noto Sans Symbols 2",sans-serif}
 #mute:active,#pause:active,#fs:active{transform:translateY(3px);box-shadow:inset 0 0 0 2px rgba(255,255,255,.35),0 0 0 3px rgba(20,13,11,.55),0 1px 0 #7e5a0e}
 #ver{display:none;position:fixed;right:calc(10px + env(safe-area-inset-right,0px));bottom:calc(6px + env(safe-area-inset-bottom,0px));max-width:70vw;font:max(10px,2.4vh)/1.3 "Trebuchet MS",Verdana,sans-serif;color:#f6ead6;text-shadow:0 1px 2px #000;opacity:.6;text-align:right;white-space:pre-line;cursor:pointer;z-index:5;-webkit-tap-highlight-color:transparent}
 #ver.cr{opacity:.9}
@@ -158,7 +158,7 @@ score+=speed*.08;
  tickFx();for(const i of items)if(i.sp&&!i.got&&i.x<W+40&&frame%4===0)PT.push({x:i.x+Math.random()*34-17,y:i.y+Math.random()*34-17,vx:-.3,vy:-.7,l:22,c:'#fff6c8',r:2+Math.random()*1.5});if(pendShop&&shopWarn>0){shopWarn--;if(shopWarn===80||shopWarn===40||shopWarn===1)au.sfx('tick')}if(pendShop&&shopWarn<=0&&p.y>=G&&chase===null&&!obs.some(o=>o.t!=='puddle'&&o.x<p.x+220&&o.x>p.x-70)){pendShop=false;openShop()}
 }
 function tutSave(){if(tj&&td)try{localStorage.setItem('cstut','1')}catch(e){}}
-const TUT={j:{pc:'Leertaste, Pfeil hoch oder Klick',touch:'Rechte Bildschirmhälfte antippen',pad:'A-Taste'},d:{pc:'Pfeil runter gedrückt halten',touch:'Linke Bildschirmhälfte gedrückt halten',pad:'Steuerkreuz runter halten'}};
+const TUT={j:{pc:'Leertaste, Pfeil hoch oder Klick',touch:'Rechte Bildschirmhälfte antippen',pad:'{ok}-Taste'},d:{pc:'Pfeil runter gedrückt halten',touch:'Linke Bildschirmhälfte gedrückt halten',pad:'Steuerkreuz runter halten'}};
 function zoneDraw(){
  if(dev!=='touch'||st!=='play'||paused||shopOn)return;const lim=(tj&&td)?150:420;if(frame>lim)return;
  const a=Math.min(1,(lim-frame)/30)*(.8+.2*Math.sin(frame*.15));
@@ -176,7 +176,7 @@ function tutDraw(){
  x.save();x.globalAlpha=a;rr(bx,by,360,74,12,'#f1e2bd','#6b4a2c');x.strokeStyle='#e0a82e';x.lineWidth=2;x.strokeRect(bx+5,by+5,350,64);
  x.fillStyle='#c8102e';const ay=by+37+(j?-1:1)*pul*3;x.beginPath();if(j){x.moveTo(bx+34,ay-14);x.lineTo(bx+50,ay+10);x.lineTo(bx+18,ay+10)}else{x.moveTo(bx+34,ay+14);x.lineTo(bx+50,ay-10);x.lineTo(bx+18,ay-10)}x.closePath();x.fill();
  x.textAlign='left';x.fillStyle='#8a1020';x.font='bold 20px Georgia,serif';x.fillText(j?'Springen!':'Ducken!',bx+66,by+28);
- x.fillStyle='#3b2616';x.font='14px Trebuchet MS,sans-serif';x.fillText(TUT[j?'j':'d'][dev],bx+66,by+48);
+ x.fillStyle='#3b2616';x.font='14px Trebuchet MS,sans-serif';if(dev==='pad')padText(TUT[j?'j':'d'].pad,bx+66,by+48,14,{align:'left',col:'#3b2616',dk:1});else x.fillText(TUT[j?'j':'d'][dev],bx+66,by+48);
  x.fillStyle='#6b4a2c';x.font='12px Trebuchet MS,sans-serif';x.fillText(j?'In der Luft nochmal = Doppelsprung':'So kommst du unter Schildern durch',bx+66,by+64);
  x.restore()}
 function puff(n,sp,c,r){for(let k=0;k<n;k++){const d=k%2?1:-1;PT.push({x:p.x+d*Math.random()*6,y:G-2,vx:d*(.6+Math.random()*sp)-speed*.3,vy:-.3-Math.random()*1.1,l:24+Math.random()*6,c,r:r+Math.random()*3})}}
@@ -905,11 +905,14 @@ let padPS=false;const isPS=g=>/054c|playstation|dualsense|dualshock|wireless con
 addEventListener('gamepadconnected',e=>{padPS=isPS(e.gamepad)});
 const PADK={ok:0,back:1,x:2,y:3};
 function padSym(k){return(padPS?['✕','○','□','△']:['A','B','X','Y'])[PADK[k]]}
-function padBadge(k,cx,cy,r){x.fillStyle='#f6ead6';x.beginPath();x.arc(cx,cy,r,0,7);x.fill();x.strokeStyle=x.fillStyle='#1a1210';x.lineWidth=Math.max(1.5,r*.2);const s=r*.45;
+function padBadge(k,cx,cy,r,dk){x.fillStyle=dk?'#3b2616':'#f6ead6';x.beginPath();x.arc(cx,cy,r,0,7);x.fill();x.strokeStyle=x.fillStyle=dk?'#f6ead6':'#1a1210';x.lineWidth=Math.max(1.5,r*.2);const s=r*.45;
  if(padPS){x.beginPath();const i=PADK[k];if(i===0){x.moveTo(cx-s,cy-s);x.lineTo(cx+s,cy+s);x.moveTo(cx+s,cy-s);x.lineTo(cx-s,cy+s)}else if(i===1)x.arc(cx,cy,s,0,7);else if(i===2)x.rect(cx-s*.85,cy-s*.85,s*1.7,s*1.7);else{x.moveTo(cx,cy-s);x.lineTo(cx+s,cy+s*.75);x.lineTo(cx-s,cy+s*.75);x.closePath()}x.stroke()}
  else{x.font='bold '+Math.round(r*1.25)+'px Trebuchet MS,sans-serif';x.textAlign='center';x.textBaseline='alphabetic';x.fillText(padSym(k),cx,cy+r*.44)}}
-function padHint(tpl,xr,y,fs){const pt=tpl.split(/\{(\w+)\}/),r=fs*.62,f=fs+'px Trebuchet MS,sans-serif';x.font=f;let w=0;pt.forEach((s,i)=>{w+=i%2?r*2.5:x.measureText(s).width});let cx=xr-w;
- pt.forEach((s,i)=>{if(i%2){padBadge(s,cx+r*1.25,y-fs*.35,r);cx+=r*2.5}else if(s){x.font=f;x.textAlign='left';x.fillStyle='#000';x.fillText(s,cx+1,y+1);x.fillStyle='#f6ead6';x.fillText(s,cx,y);cx+=x.measureText(s).width}})}
+/*padText: Text mit {ok}/{back}/{x}/{y} als Plaketten; o={align:'left'|'center'|'right',col,font,sh(Schatten),dk(dunkle Plakette auf hellem Grund)}*/
+/*Achtung: Text wird per rec() gesammelt und in Ebene TL===1 um 1px groesser gezeichnet (siehe txt()); deshalb mit dieser Groesse messen*/
+function padText(tpl,xa,y,fs,o){o=o||{};const ta=x.textAlign,pt=tpl.split(/\{(\w+)\}/),r=fs*.62,f=o.font||(fs+'px Trebuchet MS,sans-serif'),col=o.col||'#f6ead6',fm=TL===1&&Object.prototype.hasOwnProperty.call(x,'fillText')?f.replace(/(\d+(?:\.\d+)?)px/,Math.max(13,fs<20?fs+1:fs)+'px'):f,mw=s=>{x.font=fm;const v=x.measureText(s).width;x.font=f;return v};let w=0;pt.forEach((s,i)=>{w+=i%2?r*2.5:mw(s)});let cx=o.align==='left'?xa:o.align==='center'?xa-w/2:xa-w;
+ pt.forEach((s,i)=>{if(i%2){padBadge(s,cx+r*1.25,y-fs*.35,r,o.dk);cx+=r*2.5}else if(s){x.font=f;x.textAlign='left';if(o.sh){x.fillStyle='#000';x.fillText(s,cx+1,y+1)}x.fillStyle=col;x.fillText(s,cx,y);cx+=mw(s)}});x.textAlign=ta}
+function padHint(tpl,xr,y,fs){padText(tpl,xr,y,fs,{sh:1})}
 function pad(){
  if(!document.hasFocus()||document.hidden)return;
  const gs=navigator.getGamepads?navigator.getGamepads():[];
@@ -1072,7 +1075,7 @@ function togFull(){
 let btnS='';function btnUpd(){const s=inGame()?'g':inMenu()?'m':'';if(s===btnS)return;btnS=s;
  for(const[id,on]of[['pause',s==='g'],['mute',s==='m'],['fs',s==='m']]){const b=document.getElementById(id);if(b)b.style.display=on?'block':'none'}btnPos()}
 /*Knoepfe oben rechts: reicht der Platz ueber der Spielflaeche nicht, direkt unter die HUD-Leiste (41 von 400 px) setzen*/
-function btnPos(){const r=cv.getBoundingClientRect(),t=r.top<56?Math.round(r.top+r.height*41/H+6)+'px':'';for(const id of['pause','mute','fs']){const b=document.getElementById(id);if(b)b.style.top=t}}
+function btnPos(){const r=cv.getBoundingClientRect(),t=r.top<Math.max(44,innerHeight*.107)+12?Math.round(r.top+r.height*41/H+6)+'px':'';for(const id of['pause','mute','fs']){const b=document.getElementById(id);if(b)b.style.top=t}}
 addEventListener('resize',btnPos);
 function goFull(){
  if(fsOff||!matchMedia('(pointer:coarse)').matches)return;
@@ -1112,7 +1115,7 @@ function menuClick(e){
 const HELP={
  pc:['Springen: Leertaste, Pfeil hoch oder Klick','Kurz tippen = klein, halten = hoch springen','Doppelsprung: in der Luft nochmal drücken','Ducken: Pfeil runter halten','Pause: P oder Esc  ·  Ton: M'],
  touch:['Springen: rechte Bildschirmhälfte antippen','Kurz tippen = klein, halten = hoch springen','Doppelsprung: in der Luft nochmal tippen','Ducken: linke Bildschirmhälfte halten','Pause: II oben  ·  Ton: Lautsprecher oben'],
- pad:['Springen: A (oder Steuerkreuz hoch)','Kurz drücken = klein, halten = hoch springen','Doppelsprung: in der Luft nochmal drücken','Ducken: Steuerkreuz runter','Start: los / Pause  ·  Menü: hoch/runter + A']
+ pad:['Springen: {ok} (oder Steuerkreuz hoch)','Kurz drücken = klein, halten = hoch springen','Doppelsprung: in der Luft nochmal drücken','Ducken: Steuerkreuz runter','Start: los / Pause · Menü: hoch/runter + {ok}']
 };
 const DNAME={pc:'PC',touch:'Handy',pad:'Controller'};
 function pauseUI(){
@@ -1125,7 +1128,7 @@ function pauseUI(){
   x.fillStyle='#3b2616';x.font='bold 14px Trebuchet MS,sans-serif';
   x.fillText('Sammle Snacks & weiche den Hindernissen aus!',W/2,124);
   x.font='14px Trebuchet MS,sans-serif';
-  HELP[dev].forEach((t,i)=>x.fillText(t,W/2,150+i*22));
+  HELP[dev].forEach((t,i)=>{if(dev==='pad')padText(t,W/2,150+i*22,14,{align:'center',col:'#3b2616',dk:1});else x.fillText(t,W/2,150+i*22)});
   x.fillStyle='#6b4a2c';x.font='11px Trebuchet MS,sans-serif';x.fillText('Musik: sapan4 – „EDM Gaming Music“ (Pixabay)',W/2,352);
   for(let i=0;i<1;i++){const y=272+i*46,sel=i===psel;rr(300,y,300,40,10,sel?'#c8102e':'#d9c391','#6b4a2c');x.fillStyle=sel?'#fff':'#3b2616';x.font='bold 19px Trebuchet MS,sans-serif';x.fillText(L[i],W/2,y+27)}
  }else{
@@ -1544,7 +1547,7 @@ function shopUI(){
   x.textAlign='left';x.fillStyle=sel?'#fff':can?'#3b2616':'#7d7664';
   if(o){x.font='bold 18px Trebuchet MS,sans-serif';x.fillText((i+1)+'  '+o.n,246,y+20);x.font='12px Trebuchet MS,sans-serif';x.fillText(o.d,264,y+36);x.textAlign='right';if(cf){x.font='bold 15px Trebuchet MS,sans-serif';x.fillText('\u2714 BESTÄTIGEN',654,y+19);x.font='bold 14px Trebuchet MS,sans-serif';x.fillText(o.c()+' Snacks',654,y+37)}else{x.font='bold 17px Trebuchet MS,sans-serif';x.fillText(o.c()+' Snacks',654,y+28)}}
   else{x.textAlign='center';x.font='bold 19px Trebuchet MS,sans-serif';x.fillText('Weiter geht\u2019s \u25B6',W/2,y+29)}}
- {const cfw=dev==='touch'?'Nochmal tippen':dev==='pad'?'A-Taste':'Leertaste / Enter / Klick',pend=shPrev>=0&&shPrev===ssel&&SH[ssel];x.textAlign='center';x.font='bold 14px Trebuchet MS,sans-serif';x.fillStyle=pend?'#1f7a2e':'#6b4a2c';x.fillText(pend?cfw+' = BESTÄTIGEN & KAUFEN':'Eintrag wählen (\u2191\u2193 / antippen) \u00B7 dann '+cfw+' zum Bestätigen',W/2,340)}}
+ {const cfw=dev==='touch'?'Nochmal tippen':dev==='pad'?'{ok}-Taste':'Leertaste / Enter / Klick',pend=shPrev>=0&&shPrev===ssel&&SH[ssel];x.textAlign='center';x.font='bold 14px Trebuchet MS,sans-serif';x.fillStyle=pend?'#1f7a2e':'#6b4a2c';const s_=(pend?cfw+' = BESTÄTIGEN & KAUFEN':'Eintrag wählen (\u2191\u2193 / antippen) \u00B7 dann '+cfw+' zum Bestätigen');if(dev==='pad')padText(s_,W/2,340,14,{align:'center',col:x.fillStyle,font:x.font,dk:1});else x.fillText(s_,W/2,340)}}
 function trainDraw(o){const a=o.x,b=G-o.h,w=o.w,h=o.h;
  const wn=a>W-8&&a<W-8+70*(speed+3.2);if(wn&&!o.hn&&!paused&&st==='play'){o.hn=1;au.sfx('horn')}
  if(wn&&Math.floor(frame/6)%2){rr(W-64,G-96,54,46,6,'#c8102e','#fff');x.fillStyle='#fff';x.font='bold 28px Trebuchet MS,sans-serif';x.textAlign='center';x.fillText('\u26A0',W-37,G-62)}
