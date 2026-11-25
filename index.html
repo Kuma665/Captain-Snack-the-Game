@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-25c',
+ ver:'v2026-11-25d',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
  err:'Fehler',line:'Zeile'
@@ -911,6 +911,7 @@ function padBadge(k,cx,cy,r){x.fillStyle='#f6ead6';x.beginPath();x.arc(cx,cy,r,0
 function padHint(tpl,xr,y,fs){const pt=tpl.split(/\{(\w+)\}/),r=fs*.62,f=fs+'px Trebuchet MS,sans-serif';x.font=f;let w=0;pt.forEach((s,i)=>{w+=i%2?r*2.5:x.measureText(s).width});let cx=xr-w;
  pt.forEach((s,i)=>{if(i%2){padBadge(s,cx+r*1.25,y-fs*.35,r);cx+=r*2.5}else if(s){x.font=f;x.textAlign='left';x.fillStyle='#000';x.fillText(s,cx+1,y+1);x.fillStyle='#f6ead6';x.fillText(s,cx,y);cx+=x.measureText(s).width}})}
 function pad(){
+ if(!document.hasFocus()||document.hidden)return;
  const gs=navigator.getGamepads?navigator.getGamepads():[];
  let up=false,dn=false,go=false,act=false,bk=false,mu=false,md=false,l3=false,r3=false;
  for(const g of gs){if(!g)continue;const b=i=>g.buttons[i]&&g.buttons[i].pressed;if(g.buttons.some(q=>q.pressed)){padPS=isPS(g);if(!view)dev='pad'}bk=bk||b(1);
@@ -1069,7 +1070,10 @@ function togFull(){
  document.addEventListener('fullscreenchange',fsU);document.addEventListener('webkitfullscreenchange',fsU)}
 /*Knoepfe oben rechts: Pause nur im Spiel, Stumm + Vollbild nur in Menues (DOM nur bei Wechsel)*/
 let btnS='';function btnUpd(){const s=inGame()?'g':inMenu()?'m':'';if(s===btnS)return;btnS=s;
- for(const[id,on]of[['pause',s==='g'],['mute',s==='m'],['fs',s==='m']]){const b=document.getElementById(id);if(b)b.style.display=on?'block':'none'}}
+ for(const[id,on]of[['pause',s==='g'],['mute',s==='m'],['fs',s==='m']]){const b=document.getElementById(id);if(b)b.style.display=on?'block':'none'}btnPos()}
+/*Knoepfe oben rechts: reicht der Platz ueber der Spielflaeche nicht, direkt unter die HUD-Leiste (41 von 400 px) setzen*/
+function btnPos(){const r=cv.getBoundingClientRect(),t=r.top<56?Math.round(r.top+r.height*41/H+6)+'px':'';for(const id of['pause','mute','fs']){const b=document.getElementById(id);if(b)b.style.top=t}}
+addEventListener('resize',btnPos);
 function goFull(){
  if(fsOff||!matchMedia('(pointer:coarse)').matches)return;
  const el=document.documentElement,fs=document.fullscreenElement||document.webkitFullscreenElement;
@@ -1137,6 +1141,9 @@ addEventListener('keydown',e=>{
  if(e.code==='ArrowUp')psel=(psel+pn()-1)%pn();else if(e.code==='ArrowDown')psel=(psel+1)%pn();else if(view===2&&psel===3&&e.code==='ArrowLeft')cycleSkin(-1);else if(view===2&&psel===3&&e.code==='ArrowRight')cycleSkin(1);else if(e.code==='Enter'||e.code==='Space')pauseAct();
 });
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&st==='play'&&!paused)setPause(true)});
+/*Fokusverlust oder Controller getrennt: laufendes Spiel pausieren; ohne Controller Eingabeart zuruecksetzen*/
+addEventListener('blur',()=>{if(st==='play'&&!paused)setPause(true)});
+addEventListener('gamepaddisconnected',()=>{if(st==='play'&&!paused)setPause(true);if(!view&&dev==='pad'&&![...(navigator.getGamepads?navigator.getGamepads():[])].some(g=>g))dev=matchMedia('(pointer:coarse),(any-pointer:coarse),(hover:none)').matches?'touch':'pc'});
 {const pbn=document.getElementById('pause');if(pbn){pbn.addEventListener('pointerdown',e=>e.stopPropagation());pbn.addEventListener('click',()=>{if(st==='play')setPause(!paused)})}}
 const vib=p=>{if(!vibOn)return;try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}
  try{const ms=Array.isArray(p)?p.reduce((a,b)=>a+b,0):p;for(const g of(navigator.getGamepads?navigator.getGamepads():[]))if(g&&g.vibrationActuator&&g.vibrationActuator.playEffect)g.vibrationActuator.playEffect('dual-rumble',{duration:Math.min(ms,400),strongMagnitude:.8,weakMagnitude:.5})}catch(e){}};
