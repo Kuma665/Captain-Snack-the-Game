@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-26h',
+ ver:'v2026-11-26i',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
@@ -1059,10 +1059,12 @@ function cap(){
    x.strokeStyle='#6a0718';x.lineWidth=1.2;x.beginPath();x.moveTo(-12,-42);x.quadraticCurveTo(-20,-28,-25,-18+w*.5);x.moveTo(-5,-38);x.quadraticCurveTo(-9,-28,-11,-19);x.stroke();
    x.beginPath();x.moveTo(tx,ty);x.quadraticCurveTo(-30,-15+w,-21,-17+w*.6);x.quadraticCurveTo(-12,-18,-1,-21);x.strokeStyle=GO;x.lineWidth=2.6;x.stroke();x.strokeStyle=OL;x.lineWidth=.9;x.stroke();
    x.restore();x.restore()}
-  leg(L2,1);leg(L1,0);up();x.save();lean();arm(20,Math.PI);
-  /*Hose (Becken)*/
+  up();x.save();lean();
+  /*Hose (Becken) vor den Beinen, damit Stiefel davor liegen*/
   cel(()=>{x.beginPath();x.moveTo(-16,-46);x.lineTo(15,-46);x.quadraticCurveTo(16,-32,10,-25);x.quadraticCurveTo(0,-22,-11,-25);x.quadraticCurveTo(-17,-32,-16,-46);x.closePath()},'#2f323e','#181920',-2,-1.5);
   x.strokeStyle='#0c0c10';x.lineWidth=1.2;x.beginPath();x.moveTo(3.5,-39);x.quadraticCurveTo(3,-31,1,-27);x.stroke();
+  x.restore();x.restore();
+  leg(L2,1);leg(L1,0);up();x.save();lean();arm(20,Math.PI);
   /*Oberkoerper in Dreiviertelansicht (Mitte bei x=4): Brustmuskeln, Bauchmuskeln, Brusthaare*/
   cel(()=>{x.beginPath();x.moveTo(-28,-74);x.lineTo(25,-74);x.quadraticCurveTo(21,-58,15,-45);x.lineTo(-17,-45);x.quadraticCurveTo(-25,-58,-28,-74);x.closePath()},SK,SS,-3,-.5);
   for(const[cx,rx]of[[-4,9.5],[12,7]]){x.fillStyle='rgba(150,72,40,.32)';x.beginPath();x.ellipse(cx,-57.6,rx*.85,2.2,0,0,7);x.fill();
