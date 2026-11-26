@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-26s',
+ ver:'v2026-11-26t',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
@@ -1713,6 +1713,7 @@ const FASN=['#e8283f','#ffd23c','#2d7fd6','#2fbf4a','#ff8fc0','#ffffff'];
 function hatDraw(ww,hh){
  /*Event-Huete im Comic-Stil des Koerpers: dicker Umriss, Schattenseite rechts, Glanzlicht links. Kopf-Koordinaten: Dreispitz-Scheitel bei y -31, Krempe ~y -14, Kopfbreite ~52*/
  if(!SEASON)return;const t=seaT/1000,O='#1a0608';x.save();x.lineJoin='round';x.lineCap='round';
+if(SEASON!=='xmas'){x.translate(0,-17);x.scale(.95,.88);x.translate(0,17)}/*alle ausser Weihnachten leicht verkleinert (breit genug, um Dreispitz samt Dose zu verdecken), Drehpunkt Krempe*/
  const cl=(pf,c,s,dx,dy,lw)=>{pf();x.fillStyle=s;x.fill();x.save();x.clip();x.translate(dx,dy);pf();x.fillStyle=c;x.fill();x.restore();pf();x.strokeStyle=O;x.lineWidth=lw||2.2;x.stroke()};
  const fl=(P,c,s)=>{x.fillStyle=O;for(const q of P){x.beginPath();x.arc(q[0],q[1],q[2]+1.4,0,7);x.fill()}x.fillStyle=s;for(const q of P){x.beginPath();x.arc(q[0],q[1],q[2],0,7);x.fill()}x.fillStyle=c;for(const q of P){x.beginPath();x.arc(q[0]-.6,q[1]-1.1,q[2]*.76,0,7);x.fill()}};
  const gl=(a,b,c,d,e,f,w)=>{x.strokeStyle='rgba(255,255,255,.45)';x.lineWidth=w||2;x.beginPath();x.moveTo(a,b);x.quadraticCurveTo(c,d,e,f);x.stroke()};
