@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-26y',
+ ver:'v2026-11-26z',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
@@ -104,7 +104,7 @@ function jump(){au.init();if(paused||shopOn||(cd>0&&st==='play'))return;if(st!==
 function cutJump(){if(st==='play'&&p.vy<-7)p.vy=-7}
 addEventListener('keydown',e=>{if(e.code==='KeyN'&&inGame())skipStage();if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();jump()}if(e.code==='ArrowDown'&&!paused&&!shopOn&&cd<=0)p.duck=true});
 addEventListener('keyup',e=>{if(e.code==='ArrowDown'&&!paused&&cd<=0)p.duck=false;if(e.code==='Space'||e.code==='ArrowUp')cutJump()});
-let dkPid=-1;document.addEventListener('pointerdown',e=>{e.preventDefault();if(shopOn){shopClick(e);return}if(paused){menuClick(e);return}if(e.pointerType==='touch'&&st==='play'&&cd<=0&&e.clientX<innerWidth/2){p.duck=true;dkPid=e.pointerId;return}jump()});
+let dkPid=-1;document.addEventListener('pointerdown',e=>{e.preventDefault();if(shopOn){shopClick(e);return}if(paused){menuClick(e);return}if(st==='over'){const r=cv.getBoundingClientRect(),mx=(e.clientX-r.left)*W/r.width,my=(e.clientY-r.top)*H/r.height;if(mx<330||mx>570||my<214||my>272)return}if(e.pointerType==='touch'&&st==='play'&&cd<=0&&e.clientX<innerWidth/2){p.duck=true;dkPid=e.pointerId;return}jump()});
 for(const ev of['pointerup','pointercancel'])document.addEventListener(ev,e=>{if(e.pointerId===dkPid){dkPid=-1;if(!paused&&cd<=0)p.duck=false}});
 for(const ev of['pointerup','pointercancel'])document.addEventListener(ev,e=>{cutJump()});
 let cr=0;
@@ -856,9 +856,9 @@ function draw(){
  x.font='bold 18px Trebuchet MS,sans-serif';x.textAlign='left';x.fillStyle='#f6ead6';x.fillText('Punkte '+Math.floor(score),14,26);
  x.textAlign='center';x.fillStyle='#e0a82e';x.fillText('Snacks '+coins+(mult()>1?'  x'+mult():''),W/2,26);{const cm=mult(),fr=cm>=5?1:(combo%3)/3;rr(W/2-60,31,120,5,2,'#140d0b');if(fr>0)rr(W/2-60,31,120*fr,5,2,cm>=5?(frame%10<5?'#ffd23c':'#fff3a8'):'#e0a82e')}x.textAlign='right';x.fillStyle='#f6ead6';x.fillText('Rekord '+Math.floor(best),W-14,26);x.shadowBlur=0;x.shadowOffsetY=0;
  for(let k=0;k<Math.max(3,lives);k++){const on=k<lives,pu=on&&lives===1?1+Math.sin(frame*.25)*.12:1;x.save();x.translate(24+k*26,60);x.scale(pu,pu);x.translate(-(24+k*26),-60);x.shadowColor='rgba(0,0,0,.5)';x.shadowBlur=4;x.shadowOffsetY=2;heart(24+k*26,60,10,on?'#e8203f':'rgba(20,13,11,.45)');x.shadowColor='transparent';if(on){x.fillStyle='rgba(255,255,255,.55)';x.beginPath();x.ellipse(24+k*26-5,57,2.5,1.6,-.6,0,7);x.fill()}x.restore()}
- effHud();if(flash>0){x.globalAlpha=Math.min(1,flash/10);x.fillStyle='#fff';x.strokeStyle='#2b1a12';x.lineWidth=4;x.font='bold 24px Georgia,serif';x.textAlign='center';x.strokeText(msg,W/2,160);x.fillText(msg,W/2,160);x.globalAlpha=1}
+ effHud();if(flash>0&&st==='play'){x.globalAlpha=Math.min(1,flash/10);x.fillStyle='#fff';x.strokeStyle='#2b1a12';x.lineWidth=4;x.font='bold 24px Georgia,serif';x.textAlign='center';x.strokeText(msg,W/2,160);x.fillText(msg,W/2,160);x.globalAlpha=1}
  if(skW>0){x.save();x.globalAlpha=skW/22*.85;x.fillStyle='#fff';x.fillRect(0,41,W,H);x.restore()}
- if(sbn>0){const T=210-sbn,al=T<20?T/20:sbn<35?sbn/35:1,e=1-Math.pow(1-Math.min(1,T/34),3),off=(1-e)*160,by=48,bh=74;
+ if(sbn>0&&st==='play'){const T=210-sbn,al=T<20?T/20:sbn<35?sbn/35:1,e=1-Math.pow(1-Math.min(1,T/34),3),off=(1-e)*160,by=48,bh=74;
   x.save();
   if(T<70){x.globalAlpha=.3*(1-T/70)*al;x.fillStyle='#fff';for(let i=0;i<16;i++){const yy=50+(i*53)%290,ln=90+(i*37)%150,xx=W+60-((T*38+i*131)%(W+300));x.fillRect(xx,yy,ln,2)}}
   x.globalAlpha=al;
