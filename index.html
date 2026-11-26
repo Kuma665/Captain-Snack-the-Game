@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-26d',
+ ver:'v2026-11-26e',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
@@ -1121,10 +1121,10 @@ function pauseAct(){
  else if(psel===2){view=2;psel=0}
  else{view=1;psel=0}
 }
-const MY0=108,rowH=n=>Math.floor((214-(n-1)*8)/n),rowY=(i,n)=>MY0+i*(rowH(n)+8);
+const HBY=310;/*Anleitung: Zurueck-Knopf oben (y)*/const MY0=108,rowH=n=>Math.floor((214-(n-1)*8)/n),rowY=(i,n)=>MY0+i*(rowH(n)+8);
 function menuClick(e){
  const r=cv.getBoundingClientRect(),mx=(e.clientX-r.left)*W/r.width,my=(e.clientY-r.top)*H/r.height;
- for(let i=0;i<pn();i++){const y=view===1?272:rowY(i,pn());if(mx>=290&&mx<=610&&my>=y&&my<=y+(view===1?40:rowH(pn()))){psel=i;pauseAct();return}}
+ for(let i=0;i<pn();i++){const y=view===1?HBY:rowY(i,pn());if(mx>=290&&mx<=610&&my>=y&&my<=y+(view===1?40:rowH(pn()))){psel=i;pauseAct();return}}
 }
 const HELP={
  pc:['Springen: Leertaste, Pfeil hoch oder Klick','Kurz tippen = klein, halten = hoch springen','Doppelsprung: in der Luft nochmal drücken','Ducken: Pfeil runter halten','Pause: P oder Esc  ·  Ton: M'],
@@ -1142,9 +1142,8 @@ function pauseUI(){
   x.fillStyle='#3b2616';x.font='bold 14px Trebuchet MS,sans-serif';
   x.fillText('Sammle Snacks & weiche den Hindernissen aus!',W/2,124);
   x.font='14px Trebuchet MS,sans-serif';
-  {const hl=HELP[dev],y0=194-(hl.length-1)*11;/*Zeilen mittig zwischen Untertitel und Knopf*/hl.forEach((t,i)=>{if(dev==="pad")padText(t,W/2,y0+i*22,14,{align:'center',col:'#3b2616',dk:1});else x.fillText(t,W/2,y0+i*22)})}
-  x.fillStyle='#6b4a2c';x.font='11px Trebuchet MS,sans-serif';x.fillText('Musik: sapan4 – „EDM Gaming Music“ (Pixabay)',W/2,352);
-  for(let i=0;i<1;i++){const y=272+i*46,sel=i===psel;rr(300,y,300,40,10,sel?'#c8102e':'#d9c391','#6b4a2c');x.fillStyle=sel?'#fff':'#3b2616';x.font='bold 19px Trebuchet MS,sans-serif';x.fillText(L[i],W/2,y+27)}
+  {const hl=HELP[dev],y0=214-(hl.length-1)*12;/*Zeilen mittig zwischen Untertitel und Knopf*/hl.forEach((t,i)=>{if(dev==="pad")padText(t,W/2,y0+i*24,14,{align:'center',col:'#3b2616',dk:1});else x.fillText(t,W/2,y0+i*24)})}
+  for(let i=0;i<1;i++){const y=HBY+i*46,sel=i===psel;rr(300,y,300,40,10,sel?'#c8102e':'#d9c391','#6b4a2c');x.fillStyle=sel?'#fff':'#3b2616';x.font='bold 19px Trebuchet MS,sans-serif';x.fillText(L[i],W/2,y+27)}
  }else{
   L=view===2?[au.muted()?'Ton: aus':'Ton: an','Musik: '+(music==='edm'?(au.isBad()?'EDM (Fehler)':'EDM'):'Original'),'Vibration: '+(vibOn?'an':'aus'),skinLbl(),'Zurück']:['Weiter','Neustart','Einstellungen','Spielanleitung'];
   const n=L.length,h=rowH(n);L.forEach((t,i)=>{const y=rowY(i,n),sel=i===psel;rr(290,y,320,h,12,sel?'#c8102e':'#d9c391','#6b4a2c');x.fillStyle=sel?'#fff':'#3b2616';x.font='bold '+(view===2&&i===3?17:n>4?20:22)+'px Trebuchet MS,sans-serif';x.fillText(t,W/2,y+h/2+7)});
