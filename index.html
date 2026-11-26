@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-26l',
+ ver:'v2026-11-26m',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
@@ -997,7 +997,7 @@ draw=function(){
 };
 
 function cap(){
-  const d=p.duck&&p.y>=G,air=p.y<G,pr=st==='play',t=rp,sn=(air||d)?0:Math.sin(t),H0=d?-18:-42,L=19;
+  const d=p.duck&&p.y>=G,air=p.y<G,pr=st==='play',t=rp,sn=(air||d)?0:Math.sin(t),H0=d?-12:-42,L=19;
   const lg=ph=>{const a1=d?(ph?1.75:1.2)+Math.sin(t*1.5+ph)*.04:air?(ph?.8:-.6):Math.sin(t+ph)*.7,bd=air?1:.16+1.2*Math.pow(Math.max(0,Math.cos(t+ph-.25)),2),b=d?(ph?.45:a1-.12):a1-bd,kx=Math.sin(a1)*L,ky=H0+Math.cos(a1)*L;return{kx,ky,fx:kx+Math.sin(b)*L,fy:ky+Math.cos(b)*L,b}};
   const L1=lg(0),L2=lg(Math.PI),sh=air?0:-Math.max(L1.fy,L2.fy);
   const OL='#26090a',GO='#e8b03a',GD='#a8741a',GL='#fff0a0',SK='#f0b48e',SS='#c27a55';
@@ -1006,11 +1006,11 @@ function cap(){
   const lim=(ax,ay,bx,by,ra,rb)=>{const a=Math.atan2(by-ay,bx-ax),h=Math.PI/2;x.beginPath();x.arc(ax,ay,ra,a+h,a-h);x.arc(bx,by,rb,a-h,a+h);x.closePath()};
   const cel=(pf,c,s,dx,dy,lw)=>{pf();x.fillStyle=s;x.fill();x.save();x.clip();x.translate(dx,dy);pf();x.fillStyle=c;x.fill();x.restore();pf();x.strokeStyle=OL;x.lineWidth=lw||2;x.stroke()};
   const btn=(bx,by,r)=>{x.beginPath();x.arc(bx,by,r,0,7);x.fillStyle=GO;x.fill();x.strokeStyle='#5a3a0a';x.lineWidth=.9;x.stroke();x.fillStyle=GL;x.fillRect(bx-r*.55,by-r*.6,r*.6,r*.5)};
-  const up=()=>{x.save();if(d){x.translate(0,-19);x.rotate(-1.42);x.translate(0,42)}};
+  const up=()=>{x.save();if(d){x.translate(0,-4);x.rotate(-1.42);x.translate(0,42)}};
   const lA=.05+((air||d)?-.02:Math.sin(t*2)*.032);
   const lean=()=>{x.translate(0,-42);x.rotate(lA);x.translate(0,42);if(pr){x.translate(3,0);x.scale(.9,1)}};
   /*Halsmitte (Brustnaht x=4, y=-74) nach lean() umgerechnet: dort sitzt der Kopf, damit er mit dem Rumpf mitgeht*/
-  const nX=d?-3:pr?6.6:4,NKx=nX*Math.cos(lA)+32*Math.sin(lA),NKy=-42+nX*Math.sin(lA)-32*Math.cos(lA);
+  const nX=d?4:pr?6.6:4,NKx=nX*Math.cos(lA)+32*Math.sin(lA),NKy=-42+nX*Math.sin(lA)-32*Math.cos(lA);
   /*Stiefel eines nach hinten schwingenden Beins liegt hinter dem Mantel, sonst davor*/
   const kb=Q=>Math.sin(Q.b)<-.35;
   /*Bein: bt=0 Hose (vor dem Mantel gezeichnet), bt=1 Schnuerstiefel mit Umschlag, roter Schleife und roten Schnuersenkeln (nach dem Mantel, damit nichts den Stiefel abschneidet); bk = hinteres Bein, dunkler*/
@@ -1115,7 +1115,10 @@ function cap(){
    btn(cx-o*11.5,-.4,1.7)};
   if(!kb(L2))leg(L2,1,1);if(!kb(L1))leg(L1,0,1);
   up();x.save();lean();x.save();x.translate(21.5,-77);x.rotate(.22);x.scale(.8,.9);ep(1);x.restore();x.restore();
- if(HEAD.complete&&HEAD.naturalWidth){const hh=68,ww=hh*HEAD.naturalWidth/HEAD.naturalHeight;x.save();x.translate(NKx,NKy-(d?17:23)+((air||d)?0:Math.sin(2*t+.6)*.8));x.rotate(sn*.02+(d?.72:0));x.drawImage(HEAD,-ww/2,-hh*.46,ww,hh);hatDraw(ww,hh);x.restore()}
+ if(HEAD.complete&&HEAD.naturalWidth){const hh=68,ww=hh*HEAD.naturalWidth/HEAD.naturalHeight;const hy=NKy-23+((air||d)?0:Math.sin(2*t+.6)*.8),hr=sn*.02+(d?.55:0);
+   /*Hals: Hautkapsel von der Rumpfoberkante bis unter den Kopf, wird vom Kopf ueberdeckt*/
+   cel(()=>lim(NKx,NKy+3,NKx-Math.sin(hr)*7,hy+Math.cos(hr)*7,6.8,6.2),SK,SS,-1.6,-1,1.8);
+   x.save();x.translate(NKx,hy);x.rotate(hr);x.drawImage(HEAD,-ww/2,-hh*.46,ww,hh);hatDraw(ww,hh);x.restore()}
   x.save();lean();arm(-24,0);x.save();x.translate(-25.5,-77);x.rotate(-.22);x.scale(.95,.95);ep(-1);x.restore();x.restore();
   x.restore();x.restore();
 }
