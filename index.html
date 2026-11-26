@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-26m',
+ ver:'v2026-11-26n',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
@@ -1114,10 +1114,14 @@ function cap(){
    x.strokeStyle=GL;x.lineWidth=1.1;x.beginPath();x.ellipse(cx,0,7.6,4.7,0,Math.PI*1.1,Math.PI*1.55);x.stroke();
    btn(cx-o*11.5,-.4,1.7)};
   if(!kb(L2))leg(L2,1,1);if(!kb(L1))leg(L1,0,1);
-  up();x.save();lean();x.save();x.translate(21.5,-77);x.rotate(.22);x.scale(.8,.9);ep(1);x.restore();x.restore();
+  up();x.save();lean();
+  /*Nackenmuskeln (Trapez): von den Schultern schraeg hoch bis unter den Kopf, fuellt die Luecke zwischen Rumpf und Kopf; hinter Kopf und Epauletten, Umriss nur oben*/
+  {const tp=()=>{x.beginPath();x.moveTo(nX-25,-72);x.quadraticCurveTo(nX-13,-76,nX-9,-89);x.lineTo(nX+9,-89);x.quadraticCurveTo(nX+12,-76,nX+22,-72);x.closePath()};
+   tp();x.fillStyle=SS;x.fill();x.save();x.clip();x.translate(-2,-.6);tp();x.fillStyle=SK;x.fill();x.restore();
+   x.strokeStyle='#9a5233';x.lineWidth=1.1;x.beginPath();x.moveTo(nX-17,-74);x.quadraticCurveTo(nX-9,-77,nX-6,-86);x.moveTo(nX+15,-74);x.quadraticCurveTo(nX+8,-77,nX+6,-86);x.stroke();
+   x.strokeStyle=OL;x.lineWidth=1.8;x.beginPath();x.moveTo(nX-25,-72);x.quadraticCurveTo(nX-13,-76,nX-9,-89);x.moveTo(nX+9,-89);x.quadraticCurveTo(nX+12,-76,nX+22,-72);x.stroke()}
+  x.save();x.translate(21.5,-77);x.rotate(.22);x.scale(.8,.9);ep(1);x.restore();x.restore();
  if(HEAD.complete&&HEAD.naturalWidth){const hh=68,ww=hh*HEAD.naturalWidth/HEAD.naturalHeight;const hy=NKy-23+((air||d)?0:Math.sin(2*t+.6)*.8),hr=sn*.02+(d?.55:0);
-   /*Hals: Hautkapsel von der Rumpfoberkante bis unter den Kopf, wird vom Kopf ueberdeckt*/
-   cel(()=>lim(NKx,NKy+3,NKx-Math.sin(hr)*7,hy+Math.cos(hr)*7,6.8,6.2),SK,SS,-1.6,-1,1.8);
    x.save();x.translate(NKx,hy);x.rotate(hr);x.drawImage(HEAD,-ww/2,-hh*.46,ww,hh);hatDraw(ww,hh);x.restore()}
   x.save();lean();arm(-24,0);x.save();x.translate(-25.5,-77);x.rotate(-.22);x.scale(.95,.95);ep(-1);x.restore();x.restore();
   x.restore();x.restore();
