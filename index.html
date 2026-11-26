@@ -126,8 +126,8 @@ let patN=0,patL=-1,patR=0,arcId=0,ARC={};
 const h1=t=>12.5*t-.3*t*t,h2=t=>t<10?h1(t):95+h1(t-10);/*Sprunghoehe nach t Frames (einfach / Doppelsprung nach 10 Frames)*/
 function patSpawn(){const s0=gst(),D=Math.min(4,s0+Math.min(lap,2)*2),early=!(tj&&td)||ff()<GD+300;
  /*Ruhephase: nach 5 Bausteinen oder oft nach schweren, mit lockerer Snack-Spur am Boden*/
- if(!early&&patN>=2&&(patN>=5||patR&&Math.random()<.35)){patN=0;patR=0;spawnT+=40+(Math.random()*30|0);
-  if(Math.random()<.6){const s=SNACK[Math.floor(Math.random()*3)];for(let k=0;k<4;k++)items.push({s,x:W+60+k*46,y:G-(k%2?62:40)})}return true}
+ if(!early&&patN>=2&&(patN>=7||patR&&Math.random()<.2)){patN=0;patR=0;spawnT+=40+(Math.random()*30|0);
+  if(Math.random()<.3){const s=SNACK[Math.floor(Math.random()*3)];for(let k=0;k<4;k++)items.push({s,x:W+60+k*46,y:G-(k%2?62:40)})}return true}
  const wt=q=>q.w*(q.e.length===1?Math.max(.45,1-D*.14):1),ok=PAT.filter((q,i)=>i!==patL&&q.d<=D&&(q.m===undefined||s0<=q.m)&&(!early||q.e.length===1));
  let r=Math.random()*ok.reduce((u,q)=>u+wt(q),0),P=ok[0];for(const q of ok){r-=wt(q);if(r<=0){P=q;break}}
  patL=PAT.indexOf(P);patN++;patR=P.d>=2;
@@ -138,15 +138,15 @@ function patSpawn(){const s0=gst(),D=Math.min(4,s0+Math.min(lap,2)*2),early=!(tj
   E.push({t,at,w,vo,mv})}
  spawnT+=Math.round(E[E.length-1].at);
  /*SNACK-BOEGEN: liegen auf der idealen Sprungbahn (bei Schildern als Rutsch-Spur), alle erwischt = Perfekt-Bonus (arcGot)*/
- if(Math.random()>(early?.5:.65))return false;
- P.a.forEach(([i,j],n)=>{if(n>0&&Math.random()<.5)return;const A=E[i],B=E[j],id=++arcId,s=SNACK[Math.floor(Math.random()*3)],ev=B.mv,vi=es+ev;
+ if(Math.random()>.22)return false;
+ [P.a[0]].forEach(([i,j])=>{const A=E[i],B=E[j],id=++arcId,s=SNACK[Math.floor(Math.random()*3)],ev=B.mv,vi=es+ev;
   const add=(t,y)=>{items.push({s,x:p.x+(b+t)*vi,y,ag:id,ev});ARC[id]=(ARC[id]||0)+1};
-  if(A.t==='s'){for(let k=i;k<=j;k++){const e=E[k];for(const f of(i===j?[.18,.5,.82]:[.3,.7]))add(e.at+f*e.w/e.vo,G-22)}return}
+  if(A.t==='s'){for(let k=i;k<=j;k++){const e=E[k];for(const f of(i===j?[.18,.5,.82]:[.5]))add(e.at+f*e.w/e.vo,G-22)}return}
   const tc=(A.at+B.at+B.w/B.vo)/2,dur=B.at+B.w/B.vo-A.at+16/es;
-  if(dur<=26){const n=j>i?5:3,dd=j>i?7:9;for(let k=0;k<n;k++){const dl=(k-(n-1)/2)*dd;add(tc+dl,G-31-h1(20.83+dl))}}
-  else for(let k=0;k<6;k++){const tt=8+k*8;add(tc-29.7+tt,G-31-h2(tt))}});
+  if(dur<=26){const n=3,dd=j>i?11:9;for(let k=0;k<n;k++){const dl=(k-(n-1)/2)*dd;add(tc+dl,G-31-h1(20.83+dl))}}
+  else for(let k=0;k<4;k++){const tt=10+k*12;add(tc-29.7+tt,G-31-h2(tt))}});
  return true}
-function arcGot(i){if(ARC[i.ag]===undefined||--ARC[i.ag]>0)return;delete ARC[i.ag];const g=30*mult();score+=g;msg=TXT.perfect+' +'+g;flash=46;
+function arcGot(i){if(ARC[i.ag]===undefined||--ARC[i.ag]>0)return;delete ARC[i.ag];const g=20*mult();score+=g;msg=TXT.perfect+' +'+g;flash=46;
  FT.push({x:p.x+30,y:p.y-100,t:60,s:TXT.perfect+' +'+g,c:'#ffd23c'});au.sfx('combo',3);burst(p.x,p.y-40,'#ffd23c')}
 function spawn(){
  if(gst()===1&&Math.random()<.22&&!obs.some(o=>o.t!=='puddle'&&o.x>W-220)){obs.push({t:'train',x:W+300,w:160,h:56,v:1});for(let k=0;k<3;k++)items.push({s:SNACK[k],x:W+334+k*46,y:G-112-(k===1?14:0),tr:1});spawnT+=40;return}
@@ -186,7 +186,7 @@ score+=speed*.08;
  if(chase!==null){{const ahead=obs.some(o=>o.t==='sign'&&o.x+o.w>p.x-40&&o.x<p.x+speed*85+60);if(ahead&&chase<20&&++dogHold<=120)chase=Math.min(chase+1.05,19.9);else chase+=1.05}if(chase!==null){if(chase>=20&&chase-1.05<20)au.sfx('bark');if(chase>=p.x-20){chase=null;slowT=0;if(p.y<G-14){dogOut={x:p.x-20,t:0};FT.push({x:p.x,y:p.y-90,t:50,s:'Ausgewichen!',c:'#ffffff'});au.sfx('jump',2)}else if(hurt())return}}}
  for(const i of items){i.x-=speed;if(i.tr)i.x-=3.2*speed/baseSp;if(i.ev)i.x-=i.ev*speed/baseSp;if(magT>0&&!i.got){const dx=p.x-i.x,dy=p.y-30-i.y;if(Math.hypot(dx,dy)<230){i.x+=dx*.16;i.y+=dy*.16}}
   if(!i.got&&hit(box,{x:i.x-26,y:i.y-26,w:52,h:52})){i.got=1;coins++;combo++;qGot(i.s.n);if(i.s.n==='Feuer-Nudeln')noodleFx();burst(i.x,i.y,i.s.c);au.sfx('coin',combo,i.s.n==='Plüsch');const gain=i.s.pts*mult()*(i.sp?3:1);score+=gain;FT.push({x:i.x,y:i.y-14,t:44,s:'+'+gain,c:i.sp?'#ffd86a':'#ffffff'});msg=i.s.n+' +'+gain+(mult()>1?'  (x'+mult()+')':'');flash=30;if(i.sp){au.sfx('combo',5);snackFx(i.s.n)}if(i.s.n==='Chili-Chips'&&++fire%5===0){msg='Scharfe Chili-Chips! 🔥 Doppelte Punkte';score+=50;au.sfx('chili');shk=Math.max(shk,7);vib([30,40,30,40,60])}if(i.ag)arcGot(i)}}
- for(const i of items)if(i.x<=-40&&!i.got){combo=0;if(i.ag)delete ARC[i.ag]}
+ for(const i of items)if(i.x<=-40&&!i.got){if(i.ag)delete ARC[i.ag];else combo=0}
  items=items.filter(i=>i.x>-40&&!i.got);
  if(!tj){if(tjAt&&frame>tjAt+60){tj=true;tutSave()}}
  else if(!td){tutNear=obs.some(o=>o.t==='sign'&&o.x<W-60&&o.x>p.x-30);if(p.duck&&p.y>=G&&tutNear&&!tdAt)tdAt=frame+1;if(tdAt&&frame>tdAt+50){td=true;tutNear=false;tutSave()}}
