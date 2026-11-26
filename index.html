@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-26u',
+ ver:'v2026-11-26v',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
@@ -1627,7 +1627,7 @@ function shopUI(){
  p.duck=false;x.fillStyle='rgba(20,13,11,.65)';x.fillRect(0,41,W,H);
  x.save();x.shadowColor='rgba(0,0,0,.6)';x.shadowBlur=26;x.shadowOffsetY=7;rr(200,48,500,314,14,'#f1e2bd','#6b4a2c');x.restore();x.strokeStyle='#e0a82e';x.lineWidth=3;x.strokeRect(212,60,476,290);
  x.font='bold 28px Georgia,serif';x.save();{const t1='Captain ',t2='Snack',t3='-Kiosk',w1=x.measureText(t1).width,w2=x.measureText(t2).width,w3=x.measureText(t3).width,x0=W/2-(w1+w2+w3)/2;x.textAlign='left';x.lineJoin='round';x.lineWidth=5;x.strokeStyle='#3a1208';[[t1,0,'#d8101f'],[t2,w1,'#ffd21e'],[t3,w1+w2,'#d8101f']].forEach(([t,o,c])=>{x.strokeText(t,x0+o,92);x.fillStyle=c;x.fillText(t,x0+o,92)})}x.restore();x.textAlign='center';for(const[cx,cy]of[[220,68],[680,68],[220,342],[680,342]]){x.fillStyle='#e0a82e';x.beginPath();x.arc(cx,cy,4,0,7);x.fill();x.strokeStyle='#6b4a2c';x.lineWidth=1.5;x.stroke()}
- x.fillStyle='#3b2616';x.font='bold 14px Trebuchet MS,sans-serif';x.fillText('Boxenstopp \u00B7 Deine Snacks: '+coins+(shMsg?'   \u2014   '+shMsg:''),W/2,114);
+ x.fillStyle='#3b2616';x.font='bold 14px Trebuchet MS,sans-serif';x.fillText('Proviant-Stopp \u00B7 Deine Snacks: '+coins+(shMsg?'   \u2014   '+shMsg:''),W/2,114);
  for(let i=0;i<=SH.length;i++){const y=126+i*50,sel=i===ssel,o=SH[i],can=!o||(coins>=o.c()&&o.ok());
   const cf=sel&&shPrev===i&&o;rr(230,y,440,44,10,cf?'#2e8b3d':sel?'#c8102e':can?'#d9c391':'#bdb59f',cf&&Math.floor(Date.now()/350)%2?'#ffe14a':'#6b4a2c');
   x.textAlign='left';x.fillStyle=sel?'#fff':can?'#3b2616':'#7d7664';
@@ -1654,10 +1654,12 @@ function polish(){
  for(let k=FT.length-1;k>=0;k--){const f=FT[k];f.t--;f.y-=.8;if(f.t<=0){FT.splice(k,1);continue}x.globalAlpha=Math.min(1,f.t/18);x.strokeText(f.s,f.x,f.y);x.fillStyle=f.c;x.fillText(f.s,f.x,f.y)}
  x.restore()}
 {const _d3=draw;draw=function(){_d3();if(st==='play'&&!paused)polish();if(shopOn)shopUI()}}
-/* Warnhinweis: Boxenstopp ploppt gleich auf */
-{const _dw=draw;draw=function(){_dw();if(st==='play'&&!paused&&!shopOn&&pendShop){const a=Math.min(1,(shopWarn>0?120-shopWarn:20)/12),pu=.5+.5*Math.sin(frame*.25),w=330,h=34,bx=W/2-w/2,by=G+22-(1-a)*30;
- x.save();x.globalAlpha=a;rr(bx,by,w,h,17,'rgba(20,13,11,.82)',pu>.5?'#ffe14a':'#e0a82e');x.textAlign='center';x.fillStyle='#ffe9b0';x.font='bold 15px Trebuchet MS,sans-serif';
- x.fillText(shopWarn>0?'\u{1F6D2} Boxenstopp gleich! Shop öffnet sich'+(shopWarn>0?' in '+Math.ceil(shopWarn/60)+' s':''):'\u{1F6D2} Boxenstopp, sobald die Bahn frei ist',W/2,by+22);x.restore()}}}
+/* Warnhinweis: Proviant-Stopp ploppt gleich auf */
+{const _dw=draw;draw=function(){_dw();if(st==='play'&&!paused&&!shopOn&&pendShop){const a=Math.min(1,(shopWarn>0?120-shopWarn:20)/12),pu=.5+.5*Math.sin(frame*.25),h=34,by=G+22-(1-a)*30;
+ const tx=shopWarn>0?'\u{1F6D2} Proviant-Stopp gleich! Shop öffnet sich in '+Math.ceil(shopWarn/60)+' s':'\u{1F6D2} Proviant-Stopp, sobald die Bahn frei ist';
+ x.save();x.font='bold 16px Trebuchet MS,sans-serif';const w=Math.max(330,x.measureText(tx).width+40),bx=W/2-w/2;/*Breite aus Text (HUD-Text wird 1 px groesser gezeichnet)*/
+ x.globalAlpha=a;rr(bx,by,w,h,17,'rgba(20,13,11,.82)',pu>.5?'#ffe14a':'#e0a82e');x.textAlign='center';x.fillStyle='#ffe9b0';x.font='bold 15px Trebuchet MS,sans-serif';
+ x.fillText(tx,W/2,by+22);x.restore()}}}
 /* Himmelsfarben des aktuellen Abschnitts ans Seiten-Layout weiterreichen (Ambilight) */
 {const _dt=draw;let _c=0;draw=function(){_dt();if(--_c<=0){_c=15;try{document.body.classList.toggle('touch',dev==='touch')}catch(e){}}}}
 {const _dz=draw;let _g=0;draw=function(){_dz();if(--_g<=0){_g=12;try{const[a,b,e]=stg2(),r=document.documentElement.style;r.setProperty("--sky0",mix(SKY[a][0],SKY[b][0],e));r.setProperty("--sky1",mix(SKY[a][1],SKY[b][1],e))}catch(_){}}}}
