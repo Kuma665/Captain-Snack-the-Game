@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-26za',
+ ver:'v2026-11-26zb',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
@@ -141,9 +141,9 @@ function patSpawn(){const s0=gst(),D=Math.min(4,s0+Math.min(lap,2)*2),early=!(tj
  if(Math.random()>.22)return false;
  [P.a[0]].forEach(([i,j])=>{const A=E[i],B=E[j],id=++arcId,s=SNACK[Math.floor(Math.random()*3)],ev=B.mv,vi=es+ev;
   const add=(t,y)=>{items.push({s,x:p.x+(b+t)*vi,y,ag:id,ev});ARC[id]=(ARC[id]||0)+1};
-  if(A.t==='s'){for(let k=i;k<=j;k++){const e=E[k];for(const f of(i===j?[.18,.5,.82]:[.5]))add(e.at+f*e.w/e.vo,G-22)}return}
+  if(A.t==='s'){for(let k=i;k<=j;k++){const e=E[k];for(const d of(i===j?[-46,0,46]:[0]))add(e.at+(e.w/2+d)/e.vo,G-22)}return}
   const tc=(A.at+B.at+B.w/B.vo)/2,dur=B.at+B.w/B.vo-A.at+16/es;
-  if(dur<=26){const n=3,dd=j>i?11:9;for(let k=0;k<n;k++){const dl=(k-(n-1)/2)*dd;add(tc+dl,G-31-h1(20.83+dl))}}
+  if(dur<=26){const n=3,dd=Math.max(j>i?11:9,46/vi);for(let k=0;k<n;k++){const dl=(k-(n-1)/2)*dd;add(tc+dl,G-31-h1(20.83+dl))}}
   else for(let k=0;k<4;k++){const tt=10+k*12;add(tc-29.7+tt,G-31-h2(tt))}});
  return true}
 function arcGot(i){if(ARC[i.ag]===undefined||--ARC[i.ag]>0)return;delete ARC[i.ag];const g=20*mult();score+=g;msg=TXT.perfect+' +'+g;flash=46;
@@ -1434,6 +1434,12 @@ function itemFix(){for(const it of items){if(it.got||it.tr||it.ag||it.x<W-20)con
   else if(o.t==='puddle'){if(it.x>L-30&&it.x<R+30)need=70}
   else if(o.t==='sign'){if(it.x>L-30&&it.x<R+30){it.y=G-22;continue}}
   if(need>0&&G-it.y<need)it.y=G-need}}}
+/*Snacks nie aufeinander: neue lose Snacks ruecken weiter (sonst weg), ein neuer Bogen auf einem anderen Snack faellt ganz weg*/
+function itemSep(i0){const ov=(a,b)=>a!==b&&!b.got&&!b.rm&&Math.abs(a.x-b.x)<44&&Math.abs(a.y-b.y)<44,bad=new Set();
+ for(let k=i0;k<items.length;k++){const it=items[k];if(it.tr||it.got)continue;
+  if(it.ag){if(items.some((q,m)=>m<i0&&q.ag!==it.ag&&ov(it,q)))bad.add(it.ag);continue}
+  for(let t=0;t<6&&items.some(q=>ov(it,q));t++)it.x+=46;if(items.some(q=>ov(it,q)))it.rm=1}
+ for(const id of bad)delete ARC[id];items=items.filter(q=>!q.rm&&!bad.has(q.ag))}
 function estSp(){return Math.max(baseSp,Math.max(lap>0?7.2+Math.min(lap,6)*.55:0,SPD[gst()]+Math.min(lap,6)*.5+creep()))*1.05}
 const TRG=150,GMIN=36;function gapFix(n0,i0){const es=estSp(),TT=1-.55*Math.min(1,(lap+gst()/5)/2.6);const ta=o=>(o.x-p.x)/(es+(o.t==='crate'?[0,1.4,0,0,0][o.v|0]:0)+(o.t==='train'?3.2:0));const pr=[],cand=[0];
  for(let j=n0;j<obs.length;j++){const a=ta(obs[j]);for(let i=0;i<n0;i++){const o=obs[i];if(o.x<p.x-40)continue;const b=ta(o);const gf=Math.max(.75,Math.min(1,1-(es-5)*.1)),gp=Math.max(GMIN,Math.round(((obs[j].t==='train'||o.t==='train')?TRG:(obs[j].t==='puddle'&&o.t==='puddle')?120:84)*gf*TT));pr.push([a,b,gp]);cand.push(b+gp-a)}}
@@ -1441,7 +1447,7 @@ const TRG=150,GMIN=36;function gapFix(n0,i0){const es=estSp(),TT=1-.55*Math.min(
  let d=cand.filter(c=>c>=0).sort((u,v)=>u-v).find(c=>pr.every(([a,b,gp])=>Math.abs(a+c-b)>=gp-1e-6));if(d===undefined)d=Math.max(...cand);
  if(d*(es+1.4)>700&&obs.length>n0){obs.length=n0;items.length=i0;return}/*zu weit nach hinten geschoben: lieber weglassen, sonst staut sich eine Schlange und Koffer laufen ineinander*/
  if(d>0){for(let j=n0;j<obs.length;j++)obs[j].x+=d*(es+(obs[j].t==='crate'?[0,1.4,0,0,0][obs[j].v|0]:0)+(obs[j].t==='train'?3.2:0));for(let j=i0;j<items.length;j++)items[j].x+=d*(es+(items[j].tr?3.2:0)+(items[j].ev||0))}}
-{const _sp=spawn;spawn=function(){const n0=obs.length,i0=items.length;_sp();gapFix(n0,i0);spSpawn();itemFix();if(QQ.act&&!QQ.have&&!QQ.done&&Math.random()<.6){const it=items[items.length-1];if(it&&!it.got)it.s=SNACK[QQ.sn]}}}
+{const _sp=spawn;spawn=function(){const n0=obs.length,i0=items.length;_sp();gapFix(n0,i0);spSpawn();itemFix();itemSep(i0);itemFix();if(QQ.act&&!QQ.have&&!QQ.done&&Math.random()<.6){const it=items[items.length-1];if(it&&!it.got)it.s=SNACK[QQ.sn]}}}
 const el=(a,b,rx,ry,c,r)=>{x.fillStyle=c;x.beginPath();x.ellipse(a,b,rx,ry,r||0,0,7);x.fill()};
 const rc=(a,b,w,h,c)=>{x.fillStyle=c;x.fillRect(a,b,w,h)};
 const ln2=(c,w,...q)=>{x.strokeStyle=c;x.lineWidth=w;x.lineCap='round';x.beginPath();x.moveTo(q[0],q[1]);for(let i=2;i<q.length;i+=2)x.lineTo(q[i],q[i+1]);x.stroke()};
