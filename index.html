@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-26o',
+ ver:'v2026-11-26p',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
@@ -1015,25 +1015,26 @@ function cap(){
   const kb=Q=>Math.sin(Q.b)<-.35;
   /*Bein: bt=0 Hose (vor dem Mantel gezeichnet), bt=1 Schnuerstiefel mit Umschlag, roter Schleife und roten Schnuersenkeln (nach dem Mantel, damit nichts den Stiefel abschneidet); bk = hinteres Bein, dunkler*/
   const leg=(Q,bk,bt)=>{
-   const dx=Q.fx-Q.kx,dy=Q.fy-Q.ky,dl=Math.hypot(dx,dy)||1,ux=dx/dl,uy=dy/dl,fx=uy,fy=-ux,ax=Q.kx+dx*.14,ay=Q.ky+dy*.14,ex=Q.fx,ey=Q.fy-5;
+   const dx=Q.fx-Q.kx,dy=Q.fy-Q.ky,dl=Math.hypot(dx,dy)||1,ux=dx/dl,uy=dy/dl,fx=uy,fy=-ux,ax=Q.kx+dx*.14,ay=Q.ky+dy*.14,sr=Q.b*.3,ex=Q.fx-.5*Math.cos(sr)+6.5*Math.sin(sr),ey=Q.fy-.5*Math.sin(sr)-6.5*Math.cos(sr);
    const TC=bk?'#25272f':'#2f323e',TS=bk?'#121318':'#181920',BC=bk?'#1b1c22':'#25262e',BS='#0a0a0d';
    if(!bt){cel(()=>lim(0,H0,Q.kx,Q.ky,8.6,6.8),TC,TS,-2,-1.5);
    x.strokeStyle='rgba(255,255,255,.09)';x.lineWidth=1.4;x.beginPath();x.moveTo(-3,H0+3);x.lineTo(Q.kx-2.5,Q.ky-1);x.stroke();
    cel(()=>lim(Q.kx,Q.ky,ax,ay,6.8,6.6),TC,TS,-2,-1.5);return}
-   /*Fuss zuerst, Schaft nahtlos darueber (kein Abschluss-Umriss), damit Bein und Schuh verbunden wirken*/
-   x.save();x.translate(Q.fx,Q.fy);x.rotate(Q.b*.3);
-   cel(()=>{x.beginPath();x.moveTo(-7.5,-8);x.lineTo(6.5,-8);x.quadraticCurveTo(7.5,-5,13,-4.6);x.quadraticCurveTo(18.5,-4.2,18.5,0);x.lineTo(-8.5,0);x.quadraticCurveTo(-9.5,-4.5,-7.5,-8);x.closePath()},BC,BS,-1.5,-1.5);
+   {const sp=()=>lim(ax,ay,ex,ey,7,6.4);sp();x.fillStyle=BS;x.fill();x.save();x.clip();x.translate(-2,-1.5);sp();x.fillStyle=BC;x.fill();x.restore();
+    const qx=ex,qy=ey;x.strokeStyle=OL;x.lineWidth=2;x.beginPath();x.moveTo(ax+fx*7,ay+fy*7);x.lineTo(qx+fx*6.5,qy+fy*6.5);x.moveTo(ax-fx*7,ay-fy*7);x.lineTo(qx-fx*6.5,qy-fy*6.5);x.stroke();
+    x.strokeStyle='rgba(255,255,255,.16)';x.lineWidth=1.2;x.beginPath();x.moveTo(ax+fx*4.6+ux*3,ay+fy*4.6+uy*3);x.lineTo(qx+fx*4.4,qy+fy*4.4);x.stroke()}
+   x.lineCap='round';for(let k=0;k<3;k++){const q=.3+k*.25,lx=ax+(ex-ax)*q+fx*4,ly=ay+(ey-ay)*q+fy*4;
+    x.strokeStyle='#d0182e';x.lineWidth=1.1;x.beginPath();x.moveTo(lx-fx*2-ux*1.6,ly-fy*2-uy*1.6);x.lineTo(lx+fx*2+ux*1.6,ly+fy*2+uy*1.6);x.moveTo(lx+fx*2-ux*1.6,ly+fy*2-uy*1.6);x.lineTo(lx-fx*2+ux*1.6,ly-fy*2+uy*1.6);x.stroke();
+    x.fillStyle=GO;x.beginPath();x.arc(lx+fx*2.6,ly+fy*2.6,.7,0,7);x.fill()}
+   /*Schuh nach dem Schaft, ohne Umriss an der Oberkante: Schaft verschwindet nahtlos im Schuh*/
+   x.save();x.translate(Q.fx,Q.fy);x.rotate(sr);
+   {const sf=()=>{x.beginPath();x.moveTo(-7.5,-8);x.lineTo(6.5,-8);x.quadraticCurveTo(7.5,-5,13,-4.6);x.quadraticCurveTo(18.5,-4.2,18.5,0);x.lineTo(-8.5,0);x.quadraticCurveTo(-9.5,-4.5,-7.5,-8);x.closePath()};sf();x.fillStyle=BS;x.fill();x.save();x.clip();x.translate(-1.5,-1.5);sf();x.fillStyle=BC;x.fill();x.restore();
+    x.beginPath();x.moveTo(6.5,-8);x.quadraticCurveTo(7.5,-5,13,-4.6);x.quadraticCurveTo(18.5,-4.2,18.5,0);x.lineTo(-8.5,0);x.quadraticCurveTo(-9.5,-4.5,-7.5,-8);x.strokeStyle=OL;x.lineWidth=2;x.stroke()}
    x.fillStyle='rgba(255,255,255,.22)';x.beginPath();x.ellipse(12.5,-3.7,3.8,1.1,-.12,0,7);x.fill();
    x.strokeStyle='#d0182e';x.lineWidth=1.1;x.beginPath();for(let k=0;k<1;k++){const lx=4.6,ly=-5.6;x.moveTo(lx-1.6,ly-1.2);x.lineTo(lx+1.6,ly+1.2);x.moveTo(lx+1.6,ly-1.2);x.lineTo(lx-1.6,ly+1.2)}x.stroke();
    x.beginPath();x.roundRect(-9.5,-.5,29.5,4.5,[1,3,3,1.5]);F("#0e0e12");x.fillStyle="#c8102e";x.fillRect(-8.5,-.3,27.5,1.1);
    x.fillStyle='rgba(255,255,255,.13)';for(let k=0;k<5;k++)x.fillRect(-7+k*5,2.4,2.6,1);
    x.restore();
-   {const sp=()=>lim(ax,ay,ex,ey,7,6.4);sp();x.fillStyle=BS;x.fill();x.save();x.clip();x.translate(-2,-1.5);sp();x.fillStyle=BC;x.fill();x.restore();
-    const qx=ex-ux*6,qy=ey-uy*6;x.strokeStyle=OL;x.lineWidth=2;x.beginPath();x.moveTo(ax+fx*7,ay+fy*7);x.lineTo(qx+fx*6.5,qy+fy*6.5);x.moveTo(ax-fx*7,ay-fy*7);x.lineTo(qx-fx*6.5,qy-fy*6.5);x.stroke();
-    x.strokeStyle='rgba(255,255,255,.16)';x.lineWidth=1.2;x.beginPath();x.moveTo(ax+fx*4.6+ux*3,ay+fy*4.6+uy*3);x.lineTo(qx+fx*4.4,qy+fy*4.4);x.stroke()}
-   x.lineCap='round';for(let k=0;k<3;k++){const q=.3+k*.25,lx=ax+(ex-ax)*q+fx*4,ly=ay+(ey-ay)*q+fy*4;
-    x.strokeStyle='#d0182e';x.lineWidth=1.1;x.beginPath();x.moveTo(lx-fx*2-ux*1.6,ly-fy*2-uy*1.6);x.lineTo(lx+fx*2+ux*1.6,ly+fy*2+uy*1.6);x.moveTo(lx+fx*2-ux*1.6,ly+fy*2-uy*1.6);x.lineTo(lx-fx*2+ux*1.6,ly-fy*2+uy*1.6);x.stroke();
-    x.fillStyle=GO;x.beginPath();x.arc(lx+fx*2.6,ly+fy*2.6,.7,0,7);x.fill()}
    /*Stiefel-Umschlag als flaches Band quer zum Schienbein (keine Kapsel, sonst wirkt er wie ein Ball am Knie)*/
    x.save();x.translate(ax+ux*.5,ay+uy*.5);x.rotate(Math.atan2(uy,ux)-Math.PI/2);cel(()=>{x.beginPath();x.roundRect(-8.4,-3.2,16.8,6.4,2.6)},bk?'#24252c':'#30313b',BS,-1.5,-1.2,1.8);
    x.strokeStyle='rgba(255,255,255,.18)';x.lineWidth=1;x.beginPath();x.moveTo(-6.6,-1.8);x.lineTo(6,-1.8);x.stroke();x.restore();
@@ -1126,8 +1127,8 @@ function cap(){
    x.strokeStyle='#9a5233';x.lineWidth=1.1;x.beginPath();x.moveTo(nX-17,-74);x.quadraticCurveTo(nX-9,-77,nX-6,-86);x.moveTo(nX+15,-74);x.quadraticCurveTo(nX+8,-77,nX+6,-86);x.stroke();
    x.strokeStyle=OL;x.lineWidth=1.8;x.beginPath();x.moveTo(nX-25,-72);x.quadraticCurveTo(nX-13,-76,nX-9,-89);x.moveTo(nX+9,-89);x.quadraticCurveTo(nX+12,-76,nX+22,-72);x.stroke()}
   x.save();x.translate(21.5,-77);x.rotate(.22);x.scale(.8,.9);ep(1);x.restore();x.restore();
- if(HEAD.complete&&HEAD.naturalWidth){const hh=68,ww=hh*HEAD.naturalWidth/HEAD.naturalHeight;const hy=NKy-23+((air||d)?0:Math.sin(2*t+.6)*.8),hr=sn*.02+(d?.55:0);
-   x.save();x.translate(NKx,hy);x.rotate(hr);x.drawImage(HEAD,-ww/2,-hh*.46,ww,hh);hatDraw(ww,hh);x.restore()}
+ if(HEAD.complete&&HEAD.naturalWidth){const hh=68,ww=hh*HEAD.naturalWidth/HEAD.naturalHeight;const hy=NKy-20+((air||d)?0:Math.sin(2*t+.6)*.8),hr=sn*.02+(d?.55:0);
+   x.save();x.translate(NKx-1.5,hy);x.rotate(hr);x.drawImage(HEAD,-ww/2,-hh*.46,ww,hh);hatDraw(ww,hh);x.restore()}
   x.save();lean();arm(-24,0);x.save();x.translate(-25.5,-77);x.rotate(-.22);x.scale(.95,.95);ep(-1);x.restore();x.restore();
   x.restore();x.restore();
 }
