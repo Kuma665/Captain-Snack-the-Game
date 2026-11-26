@@ -14,11 +14,12 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-26w',
+ ver:'v2026-11-26x',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
- err:'Fehler',line:'Zeile'
+ err:'Fehler',line:'Zeile',
+ recNew:'Neuer Rekord!',recSay:'Arrr! Rekord geknackt!'
 };
 /*HOCHFORMAT: Spiel gesperrt (Dreh-Hinweis deckt alles ab, laufendes Spiel pausiert)*/
 const ROT=matchMedia('(orientation:portrait)');
@@ -859,7 +860,7 @@ function draw(){
   x.restore()}
  if(st!=='play'){x.fillStyle='rgba(20,13,11,.45)';x.fillRect(0,41,W,H);{const pg=x.createLinearGradient(0,100,0,290);pg.addColorStop(0,'#f8ecc8');pg.addColorStop(1,'#e6d29f');x.shadowColor='rgba(0,0,0,.5)';x.shadowBlur=24;x.shadowOffsetY=8;rr(170,100,560,190,14,pg,'#6b4a2c');x.shadowColor='transparent';x.shadowBlur=0;x.shadowOffsetY=0}x.strokeStyle='#e0a82e';x.lineWidth=3;x.strokeRect(182,112,536,166);
   x.textAlign='center';x.font='bold 36px Georgia,serif';if(st!=='start'){x.fillStyle='rgba(60,20,10,.25)';x.fillText('Schiffbruch!',W/2+2,162);x.fillStyle='#8a1020';x.fillText('Schiffbruch!',W/2,159)}
-  x.fillStyle='#3b2616';x.font='15px Trebuchet MS,sans-serif';x.fillText(st==='start'?'Sammle Chili-Chips, Drinks, Bärchen & Plüschtiere durch Göppingen!':'Du hast '+Math.floor(score)+' Punkte und '+coins+' Snacks geholt!',W/2,st==='start'?212:196);if(st==='over'){x.font='bold 15px Trebuchet MS,sans-serif';x.fillStyle=recNew?'#c8102e':'#6b4a2c';x.fillText(recNew?'2605 Neuer Rekord! 2605':'Rekord: '+best,W/2,214)}
+  x.fillStyle='#3b2616';x.font='15px Trebuchet MS,sans-serif';x.fillText(st==='start'?'Sammle Chili-Chips, Drinks, Bärchen & Plüschtiere durch Göppingen!':'Du hast '+Math.floor(score)+' Punkte und '+coins+' Snacks geholt!',W/2,st==='start'?212:196);if(st==='over'){x.font='bold 15px Trebuchet MS,sans-serif';x.fillStyle=recNew?'#c8102e':'#6b4a2c';x.fillText(recNew?'★ '+TXT.recNew+' ★':'Rekord: '+best,W/2,214)}
   {const pb=1+Math.sin(frame*.12)*.035;x.save();x.translate(W/2,243);x.scale(pb,pb);x.translate(-W/2,-243);const bg2=x.createLinearGradient(0,222,0,264);bg2.addColorStop(0,'#e8203f');bg2.addColorStop(1,'#a50d26');x.shadowColor='rgba(138,16,32,.5)';x.shadowBlur=10;rr(340,222,220,42,10,bg2,'#e0a82e');x.shadowBlur=0;x.restore()}x.fillStyle='#fff';x.font='bold 18px sans-serif';x.fillText(st==='start'?'Tippen zum Start':'Nochmal spielen',W/2,249)}
  if(cd>0&&!paused){const n=String(Math.ceil(cd/40));x.globalAlpha=.9;x.textAlign='center';x.fillStyle='#fff';x.strokeStyle='#2b1a12';x.lineWidth=6;x.font='bold 96px Georgia,serif';x.strokeText(n,W/2,230);x.fillText(n,W/2,230);x.globalAlpha=1}
  if(paused){PUI=true;pauseUI();PUI=false}
@@ -1903,6 +1904,17 @@ addEventListener('popstate',()=>{hG=0;hPush();/*Zurueck: Spiel -> Pause, Unterme
  if(st!=='play'||shopOn)return;
  if(!paused){setPause(true);return}
  if(view===1){view=0;psel=3}else if(view===2){view=0;psel=2}});
+/*NEUER REKORD mitten im Lauf: einmal pro Lauf, sobald der alte Rekord (>0) ueberholt wird - Banner, Konfetti, Spruch; recT zaehlt in update (steht in der Pause)*/
+let recB0=0,recHit=false,recT=0;
+{const _r=reset;reset=function(){_r();recB0=best;recHit=false;recT=0}}
+{const _u=update;update=function(){_u();if(recT>0)recT--;
+ if(st==='play'&&!recHit&&recB0>0&&Math.floor(score)>recB0){recHit=true;recT=150;au.sfx('stage');vib([40,40,40,40,90]);shk=Math.max(shk,6);
+  const C=['#ffd23c','#ff5a7a','#6fd0ff','#9cff8a','#ffffff'];for(let k=0;k<36;k++){const a=-Math.PI*(.1+.8*Math.random()),v=3+Math.random()*4;PT.push({x:p.x,y:p.y-40,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:40,c:C[k%5],r:2+Math.random()*2})}
+  for(let k=0;k<6;k++){const a=k/6*6.28;PT.push({k:'star',x:p.x,y:p.y-40,vx:Math.cos(a)*3,vy:Math.sin(a)*3-1,l:30,L:30,c:'#ffd23c',r:3.5,a:Math.random()*6,va:.2,g:.05})}
+  FT.push({x:p.x+20,y:p.y-110,t:90,s:TXT.recSay,c:'#ffd23c'})}}}
+{const _d=draw;draw=function(){_d();if(recT>0&&st==='play'){const u=150-recT,s=u<12?.4+u/12*.8:u<20?1.2-(u-12)/8*.2:1,a=Math.min(1,recT/20);
+ x.save();x.globalAlpha=a;x.translate(W/2,172);x.scale(s,s);x.font='bold 24px Trebuchet MS,sans-serif';x.textAlign='center';const tx='★ '+TXT.recNew.toUpperCase()+' ★',w=x.measureText(tx).width+44;
+ rr(-w/2,-22,w,44,22,'rgba(20,13,11,.86)',frame%16<8?'#ffe14a':'#e0a82e');x.fillStyle='#ffd23c';x.fillText(tx,0,9);x.restore()}}}
 let wLock=null,wlP=false;function wlReq(){if(wLock||wlP||document.hidden||!navigator.wakeLock)return;wlP=true;
  navigator.wakeLock.request('screen').then(l=>{wLock=l;l.addEventListener('release',()=>{wLock=null})}).catch(()=>{}).finally(()=>{wlP=false})}
 ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,wlReq,true));
