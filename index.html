@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-26t',
+ ver:'v2026-11-26u',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
@@ -809,7 +809,7 @@ function draw(){
     x.fillStyle='#cfd6dc';for(const px of[a+10,a+w-10]){rr(px-4,B-30,8,12,2,'#cfd6dc','#6a737a');rr(px-4,B-14,8,8,2,'#e9eef2','#6a737a')}
     x.strokeStyle='#262a30';x.lineWidth=7;x.beginPath();x.moveTo(a-4,B-2);x.lineTo(a+w+4,B-2);x.stroke();x.strokeStyle='#b9722f';x.lineWidth=3;x.beginPath();x.moveTo(a-4,B-2);x.lineTo(a+w+4,B-2);x.stroke();
     x.fillStyle='#ffe34d';x.strokeStyle='#fff';x.lineWidth=1.5;if((frame>>2)%2){x.beginPath();const cx=a+20+((frame*7)%24),cy=B+3;x.moveTo(cx,cy-4);x.lineTo(cx+3,cy);x.lineTo(cx,cy+2);x.lineTo(cx+4,cy+7);x.stroke();x.beginPath();x.arc(cx+4,cy+7,1.8,0,7);x.fill()}
-    x.fillStyle='#ffd400';x.fillRect(a+w/2-8,B-24,16,9);x.fillStyle='#222';x.font='bold 9px sans-serif';x.textAlign='center';x.fillText('15kV',a+w/2,B-17)}
+    x.fillStyle='#ffd400';x.fillRect(a+w/2-8,B-24,16,9);{const c=a+w/2;x.fillStyle='#222';x.beginPath();x.moveTo(c+1.5,B-23);x.lineTo(c-3,B-19);x.lineTo(c,B-19);x.lineTo(c-1.5,B-16);x.lineTo(c+3,B-20.5);x.lineTo(c,B-20.5);x.closePath();x.fill()}/*Blitz statt Spannungsangabe*/}
    else if(v===2){/* Fils: tiefer Stahltraeger */
     const L=a-8,R=a+w+8,T=B-38;
     x.fillStyle='#5a4a40';for(const hx of[a+8,a+w-8]){x.fillRect(hx-3,0,6,T);x.fillStyle='#7a6358';x.fillRect(hx-3,0,2,T);x.fillStyle='#5a4a40'}
