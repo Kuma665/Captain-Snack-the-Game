@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-26z',
+ ver:'v2026-11-26za',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
@@ -1279,17 +1279,19 @@ const vib=p=>{if(!vibOn)return;try{if(navigator.vibrate)navigator.vibrate(p)}cat
 let dk=false;
 const au=(()=>{
  let ctx=null,master,mbus,sbus,lp,noiseBuf,muted=false,timer=null,nextT=0,stp=0,loopN=0,on=false;
- /*EDM-OPTION*/let edm=false,edmG=null;let edmRate=1,edmBuf=null,edmSrc=null,edmLoad=false,edmBad=false;
+ /*EDM-OPTION*/let edm=false,edmG=null;let edmRate=1,edmBuf=null,edmSrc=null,edmLoad=false,edmBad=false,edmEl=null,edmElOn=false,edmWant=false;
  function edmSet(v){edm=v}
  function edmGo(on,url){
   if(!ctx)return;
-  if(!on){if(edmSrc){try{edmSrc.stop()}catch(e){}try{edmSrc.disconnect()}catch(e){}edmSrc=null}return}
-  if(edmSrc)return;
+  edmWant=on;
+  const elGo=()=>{if(!edm||!edmWant||edmSrc||edmElOn)return;try{if(!edmEl){edmEl=new Audio(url);edmEl.loop=true}edmEl.volume=muted?0:.36;edmEl.playbackRate=edmRate;edmElOn=true;const p=edmEl.play();if(p&&p.catch)p.catch(()=>{edmElOn=false})}catch(e){edmElOn=false}};/*Ersatz: normales audio-Element, wenn die Datei nicht per XHR ladbar ist (file:// oder Netzfehler)*/
+  if(!on){if(edmSrc){try{edmSrc.stop()}catch(e){}try{edmSrc.disconnect()}catch(e){}edmSrc=null}if(edmEl&&edmElOn){try{edmEl.pause()}catch(e){}edmElOn=false}return}
+  if(edmSrc||edmElOn)return;if(location.protocol==='file:'){elGo();return}
   const play=()=>{if(!edm||edmSrc||!edmBuf)return;try{const s=ctx.createBufferSource();s.buffer=edmBuf;s.loop=true;s.playbackRate.value=edmRate;if(!edmG){edmG=ctx.createGain();edmG.gain.value=.9;edmG.connect(mbus)}s.connect(edmG);s.start(0);edmSrc=s}catch(e){edmBad=true;edm=false}};
   if(edmBuf){play();return}
   if(edmLoad||edmBad)return;const fp=edmFetch(url);if(!fp)return;edmLoad=true;
   fp.then(ab=>{const done=buf=>{edmBuf=buf;edmLoad=false;play()},fail=()=>{edmLoad=false;edmBad=true;edm=false};
-   try{const pr=ctx.decodeAudioData(ab,done,fail);if(pr&&pr.catch)pr.catch(fail)}catch(e){fail()}},()=>{edmLoad=false})/*Netzfehler: kein Dauerfehler, edmFetch versucht es spaeter erneut*/
+   try{const pr=ctx.decodeAudioData(ab,done,fail);if(pr&&pr.catch)pr.catch(fail)}catch(e){fail()}},()=>{edmLoad=false;elGo()})/*Netzfehler: kein Dauerfehler, edmFetch versucht es spaeter erneut*/
  }/*/EDM-OPTION*/
  try{muted=localStorage.getItem('csmute')==='1'}catch(e){}
  const mtf=n=>440*Math.pow(2,(n-69)/12),waves={};
@@ -1361,7 +1363,7 @@ const au=(()=>{
  function tick(){
   if(!on||!ctx)return;
   const stg=stage(),bpm=Math.min(185,148+11*(baseSp-3.6))*(lives===1?1.06:1),ed=60/bpm/2;
-  /*EDM-OPTION*/edmRate=Math.min(1.18,.91+(baseSp-3.6)*.075)*(lives===1?1.06:1);if(edmSrc)try{edmSrc.playbackRate.setTargetAtTime(edmRate,ctx.currentTime,.9)}catch(e){}/*/EDM-OPTION*/
+  /*EDM-OPTION*/edmRate=Math.min(1.18,.91+(baseSp-3.6)*.075)*(lives===1?1.06:1);if(edmSrc)try{edmSrc.playbackRate.setTargetAtTime(edmRate,ctx.currentTime,.9)}catch(e){}if(edmEl&&edmElOn&&Math.abs(edmEl.playbackRate-edmRate)>.01)try{edmEl.playbackRate=edmRate}catch(e){}/*/EDM-OPTION*/
   if(nextT<ctx.currentTime-.2)nextT=ctx.currentTime+.05;
   lp.frequency.setTargetAtTime(paused?500:sm>0?900:slowT>0?700:14000,ctx.currentTime,.05);
   while(!edm/*EDM-OPTION*/&&nextT<ctx.currentTime+.15){sched(stp,nextT,ed);nextT+=ed;stp++;if(stp>=48){stp=0;loopN++}}
@@ -1406,6 +1408,7 @@ const au=(()=>{
  };
  const sfx=(k,...a)=>{try{if(ctx)S[k](...a)}catch(e){}};
  function setMuted(m){muted=m;try{localStorage.setItem('csmute',m?'1':'0')}catch(e){}
+  if(edmEl)edmEl.volume=m?0:.36;
   if(master)master.gain.setTargetAtTime(m?0:.8,ctx.currentTime,.02);
   const b=document.getElementById('mute');if(b){b.textContent=m?'\u{1F507}':'\u{1F50A}';b.setAttribute('aria-pressed',String(m))}}
  const mb=document.getElementById('mute');
