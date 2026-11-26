@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-26c',
+ ver:'v2026-11-26d',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
@@ -1087,7 +1087,7 @@ let btnOff=0;
 function btnPos(){const r=cv.getBoundingClientRect(),s=document.documentElement.style;
  const g=k=>Math.max(k,r.height*k/380);/*Abstaende wachsen mit der Spielfeldgroesse*/
  s.setProperty('--ct',Math.round(r.top+r.height*41/H+g(6))+'px');s.setProperty('--cr',Math.round(innerWidth-r.right+g(6))+'px');
- s.setProperty('--cl',Math.round(r.left+g(10))+'px');s.setProperty('--cb',Math.round(innerHeight-r.bottom+g(6))+'px');
+ s.setProperty('--cl',Math.round(r.left+g(6))+'px');s.setProperty('--cb',Math.round(innerHeight-r.bottom+g(3))+'px');
  let m=r.right;for(const id of['pause','mute','fs']){const b=document.getElementById(id);if(b&&b.style.display==='block')m=Math.min(m,b.getBoundingClientRect().left)}
  btnOff=r.width?(r.right-m)*W/r.width:0}
 addEventListener('resize',btnPos);btnPos();
