@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-26r',
+ ver:'v2026-11-26s',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
@@ -749,7 +749,7 @@ function chaseDog(a,b){
  x.restore();x.restore()}
 function draw(){
  TL=0;bg();
- for(const o of (chase!==null?[...obs,{t:'dog',x:chase-30,y:0}]:dogOut?[...obs,{t:'dog',x:dogOut.x-30,y:0}]:obs)){obGlow(o);
+ for(const o of obs){obGlow(o);
   if(o.t==='crate'&&o.v>0){const a=o.x,b=G-o.h,w=o.w,h=o.h;x.fillStyle='rgba(0,0,0,.25)';x.fillRect(a+3,G-3,w,6);
    if(o.v===1){/* Bahnhof: Koffer */
     x.strokeStyle='#2b2b30';x.lineWidth=4;x.beginPath();x.moveTo(a+14,b+4);x.lineTo(a+14,b-4);x.lineTo(a+30,b-4);x.lineTo(a+30,b+4);x.stroke();
@@ -836,8 +836,9 @@ function draw(){
     x.strokeStyle='#5a3d22';x.lineWidth=4;x.beginPath();x.moveTo(a+w-14,B-36);x.lineTo(a+w-4,B-52);x.stroke();x.fillStyle='#6aa840';x.beginPath();x.arc(a+w-3,B-54,5,0,7);x.fill()}}
   else if(o.t==='signOLD'){const a=o.x;x.strokeStyle='#4a4a50';x.lineWidth=3;x.beginPath();x.moveTo(a+12,0);x.lineTo(a+12,G-90);x.moveTo(a+o.w-12,0);x.lineTo(a+o.w-12,G-90);x.stroke();
    {const sg=x.createLinearGradient(0,G-90,0,G-50);sg.addColorStop(0,'#a86f36');sg.addColorStop(1,'#6e4521');rr(a,G-90,o.w,40,4,sg,'#3b2616');x.fillStyle='rgba(255,255,255,.2)';x.fillRect(a+3,G-88,o.w-6,3)}x.lineWidth=3;rr(a+4,G-86,o.w-8,32,2,null,'#e0a82e');x.fillStyle='#d9b45a';for(const[rx,ry]of[[a+5,G-87],[a+o.w-5,G-87],[a+5,G-53],[a+o.w-5,G-53]]){x.beginPath();x.arc(rx,ry,1.6,0,7);x.fill()}x.shadowColor='rgba(0,0,0,.6)';x.shadowBlur=2;x.shadowOffsetY=1;x.fillStyle=x.strokeStyle='#fff3d0';x.lineWidth=1.6;x.font='bold 16px Trebuchet MS,sans-serif';x.textAlign='center';x.strokeText('KIOSK',a+o.w/2,G-63);x.fillText('KIOSK',a+o.w/2,G-63);x.shadowColor='transparent';x.shadowBlur=0;x.shadowOffsetY=0}
-  else{chaseDog(o.x,G)}}
+  else if(o.t==='dog')chaseDog(o.x,G)}/*Zug hat hier keinen Zweig (eigener Durchgang trainDraw), darf nicht als Hund gezeichnet werden*/
  for(const o of obs)if(o.t==='train')trainDraw(o);
+ {const dx=chase!==null?chase-30:dogOut?dogOut.x-30:null;if(dx!==null){const o={t:'dog',x:dx,y:0};obGlow(o);chaseDog(o.x,G)}}/*Verfolger-Hund erst nach den Zuegen, sonst wirkt er wie im Zug*/
  for(const i of items)item(i);
  PL=st==='play'&&(inv<=0||Math.floor(inv/5)%2===0);TL=1;
  {const hb=x.createLinearGradient(0,0,0,40);hb.addColorStop(0,'#3a2418');hb.addColorStop(1,'#1f120c');rr(0,0,W,40,0,hb);const gb=x.createLinearGradient(0,0,W,0);gb.addColorStop(0,'#b8841c');gb.addColorStop(.5,'#ffd86a');gb.addColorStop(1,'#b8841c');x.fillStyle=gb;x.fillRect(0,38,W,3);x.shadowColor='rgba(0,0,0,.6)';x.shadowBlur=3;x.shadowOffsetY=1}
@@ -1724,7 +1725,8 @@ function hatDraw(ww,hh){
   bd();x.strokeStyle=O;x.lineWidth=2.2;x.stroke();
   x.fillStyle=topC||bodyC;x.beginPath();x.ellipse(0,-39,17,4.5,0,0,7);x.fill();x.stroke();
   x.strokeStyle='rgba(255,255,255,.35)';x.lineWidth=2.4;x.beginPath();x.moveTo(-11,-6);x.lineTo(-12.3,-34);x.stroke()};
- if(SEASON==='xmas'){/*Weihnachtsmuetze mit Fellrand, Bommel und Stechpalme*/
+ if(SEASON==='xmas'){/*Weihnachtsmuetze mit Fellrand, Bommel und Stechpalme; auf 82 % verkleinert (Drehpunkt Krempe)*/
+  x.translate(0,-17);x.scale(.82,.82);x.translate(0,17);
   const sw=Math.sin(t*3)*1.2,bd=()=>{x.beginPath();x.moveTo(-21,-18);x.bezierCurveTo(-23,-40,-7,-58,10,-57);x.bezierCurveTo(23,-56,31,-46,32,-33+sw);x.quadraticCurveTo(25,-40,17,-42);x.bezierCurveTo(19,-34,21,-25,21,-18);x.closePath()};
   cl(bd,'#e3303d','#a3141f',-4.5,0);gl(-15,-24,-14,-44,2,-53,2.4);
   x.strokeStyle='#8a0f19';x.lineWidth=1.5;x.beginPath();x.moveTo(9,-51);x.quadraticCurveTo(15,-48,17,-42);x.moveTo(-4,-28);x.quadraticCurveTo(0,-38,6,-44);x.stroke();
@@ -1871,7 +1873,7 @@ function drawSeason(){
   for(let i=0;i<N;i++){const px=(((i*71-ws*(.1+(i%3)*.05)+Math.sin(T*.02+i)*16)%W)+W)%W,py=H+50-((i*61+T*(.5+(i%4)*.18))%(H+100));if(py<72)continue;
    x.strokeStyle='rgba(60,50,50,.55)';x.lineWidth=1;x.beginPath();x.moveTo(px,py+16);x.quadraticCurveTo(px+Math.sin(T*.05+i)*5,py+28,px,py+40);x.stroke();
    x.fillStyle=BC[i%6];x.strokeStyle=O;x.lineWidth=1.1;x.beginPath();x.moveTo(px,py+14);x.lineTo(px-3,py+17.5);x.lineTo(px+3,py+17.5);x.closePath();x.fill();x.stroke();
-   x.beginPath();x.ellipse(px,py,11,14,0,0,7);x.fill();x.save();x.clip();x.fillStyle='rgba(0,0,0,.15)';x.beginPath();x.ellipse(px+5,py+3,9,14,0,0,7);x.fill();x.restore();x.stroke();x.fillStyle='rgba(255,255,255,.5)';x.beginPath();x.ellipse(px-4,py-5,2.6,4.4,-.4,0,7);x.fill()}
+   x.beginPath();x.ellipse(px,py,11,14,0,0,7);x.fill();x.save();x.clip();x.fillStyle='rgba(0,0,0,.15)';x.beginPath();x.ellipse(px+5,py+3,9,14,0,0,7);x.fill();x.restore();x.beginPath();x.ellipse(px,py,11,14,0,0,7);x.stroke();x.fillStyle='rgba(255,255,255,.5)';x.beginPath();x.ellipse(px-4,py-5,2.6,4.4,-.4,0,7);x.fill()}
   conf(34,FASN,42,.7)}
  /*Badge auf Start/Game-Over*/
  if(st!=='play'&&!paused){x.font='bold 14px Trebuchet MS,sans-serif';x.textAlign='center';const tx=({xmas:'\u{1F384} ',fasnet:'\u{1F3AD} ',halloween:'\u{1F383} ',valentin:'\u{1F498} ',silvester:'\u{1F386} ',fussball:'⚽ ',geburtstag:'\u{1F382} ',ostern:'\u{1F430} '}[SEASON])+SEA.name,w=x.measureText(tx).width+28;rr(W/2-w/2,52,w,26,13,'rgba(20,13,11,.82)','#e0a82e');x.fillStyle='#ffe9b0';x.fillText(tx,W/2,70)}
