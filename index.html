@@ -14,14 +14,14 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-26zb',
+ ver:'v2026-11-27',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
  err:'Fehler',line:'Zeile',
  recNew:'Neuer Rekord!',recSay:'Arrr! Rekord geknackt!',
  squOn:'Squishy! Du federst – Ducken stoppt das Hüpfen',squOff:'Squishy vorbei!',squHud:'\u{1F36E} Squishy',
- near:'Knapp!',perfect:'Perfekt!'
+ near:'Knapp!'
 };
 /*HOCHFORMAT: Spiel gesperrt (Dreh-Hinweis deckt alles ab, laufendes Spiel pausiert)*/
 const ROT=matchMedia('(orientation:portrait)');
@@ -99,7 +99,7 @@ function hurt(){if(inv>0||fireT>0)return false;if(shield){shield=false;inv=70;au
 function heart(a,b,s,c){x.fillStyle=c;x.beginPath();x.moveTo(a,b+s*.9);x.bezierCurveTo(a-s*1.3,b-s*.1,a-s*.7,b-s,a,b-s*.35);x.bezierCurveTo(a+s*.7,b-s,a+s*1.3,b-s*.1,a,b+s*.9);x.fill()}
 let sm=0,nmCd=0,lm=1,bump=0;let slowT=0,chase=null;let spawnT=90;let combo=0;const mult=()=>Math.min(1+Math.floor(combo/3),5);
 const SNACK=[{n:'Chili-Chips',c:'#7a1fa2',pts:10},{n:'Drink',c:'#d11a2a',pts:10},{n:'Bärchen',c:'#2fbf4a',pts:10},{n:'Plüsch',c:'#ff8fc0',pts:25},{n:'Feuer-Nudeln',c:'#ff3b5c',pts:20},{n:'Squishy',c:'#ff8fcf',pts:15}];
-function reset(){duckS=0;skForce=0;lifeReset();fireT=fireCd=hiJ=magT=squT=waveT=waveCd=0;shield=false;lifeBought=0;shBought=0;shopOn=false;pendShop=false;shopWarn=0;lap=0;lapOff=0;sumS=-1;sumDone=false;lapNow=false;SB=[[-1e9,0]];skF=false;skB=0;skW=0;lastSt=0;ws0=ws;tjAt=0;tdAt=0;tutNear=false;p={x:110,y:G,vy:0,j:0,duck:false};obs=[];items=[];speed=6;score=0;coins=0;combo=0;spawnT=90;patN=0;patL=-1;patR=0;ARC={};slowT=0;sm=0;nmCd=0;lm=1;bump=0;PT=[];chase=null;lives=3;inv=0;baseSp=4.2;buf=0;slT=0;dogOut=null;slAcc=0;cmbSp=1;frame=0;fire=0;dk=false;shk=0;frz=0;cd=0;st='play';au.start();au.sfx('start')}
+function reset(){duckS=0;skForce=0;lifeReset();fireT=fireCd=hiJ=magT=squT=waveT=waveCd=0;shield=false;lifeBought=0;shBought=0;shopOn=false;pendShop=false;shopWarn=0;lap=0;lapOff=0;sumS=-1;sumDone=false;lapNow=false;SB=[[-1e9,0]];skF=false;skB=0;skW=0;lastSt=0;ws0=ws;tjAt=0;tdAt=0;tutNear=false;p={x:110,y:G,vy:0,j:0,duck:false};obs=[];items=[];speed=6;score=0;coins=0;combo=0;spawnT=90;patN=0;patL=-1;patR=0;slowT=0;sm=0;nmCd=0;lm=1;bump=0;PT=[];chase=null;lives=3;inv=0;baseSp=4.2;buf=0;slT=0;dogOut=null;slAcc=0;cmbSp=1;frame=0;fire=0;dk=false;shk=0;frz=0;cd=0;st='play';au.start();au.sfx('start')}
 let buf=0,slT=0,dogHold=0,dogOut=null;
 function jump(){au.init();if(paused||shopOn||(cd>0&&st==='play'))return;if(st!=='play'){reset();return}if(!tj&&!tjAt)tjAt=frame+1;if(p.j<2){const gr=p.y>=G-1;p.vy=squT>0?-14.5:-12.5;p.j++;sq=squT>0?-.3:-.15;au.sfx('jump',p.j);if(p.j===2&&!gr)airPuff();else if(gr)puff(4,1.6,'rgba(214,204,188,.8)',3)}else buf=10}
 function cutJump(){if(st==='play'&&p.vy<-7)p.vy=-7}
@@ -109,51 +109,52 @@ let dkPid=-1;document.addEventListener('pointerdown',e=>{e.preventDefault();if(s
 for(const ev of['pointerup','pointercancel'])document.addEventListener(ev,e=>{if(e.pointerId===dkPid){dkPid=-1;if(!paused&&cd<=0)p.duck=false}});
 for(const ev of['pointerup','pointercancel'])document.addEventListener(ev,e=>{cutJump()});
 let cr=0;
-/*HINDERNIS-BAUSTEINE: handgebaute Abfolgen statt Einzel-Zufall. Zeit a in Frames = wann die Vorderkante beim Spieler ist (bei jedem Tempo gleich fair), '+' = direkt anschliessend.
-  k Kiste, t Stapel (2 Kisten, lf=Anhebung der oberen), s Schild (Ducken), p Pfuetze. d = ab Schwierigkeit (Abschnitt + 2 je Runde, max 4), m = nur bis Abschnitt m (Stapel), a = Snack-Boegen [von,bis].
+/*HINDERNIS-BAUSTEINE: handgebaute Abfolgen, gemischt mit Einzel-Zufall. Zeit in Frames = wann die Vorderkante beim Spieler ist (bei jedem Tempo gleich fair), '+' = direkt anschliessend.
+  k Kiste, t Stapel (2 Kisten, lf=Anhebung der oberen), s Schild (Ducken), p Pfuetze. d = ab Schwierigkeit (Abschnitt, +1 in der 2. Abschnittshaelfte, +2 je Runde, max 4), m = nur bis Abschnitt m (Stapel).
+  Beim Bauen: Abstaende >=40 werden um PTG enger und bekommen +-PJ Frames Zufall, Bausteine ohne Stapel/Pfuetze/'+' werden zu 50 % gespiegelt (Kiste<->Schild), ab d2 manchmal ein Hindernis angehaengt.
   Sprung vy -12.5, Schwerkraft .6: Scheitel 130 px nach 20,8 Frames, ueber 44 px von Frame 4 bis 37,6; Doppelsprung (2. nach 10 Frames) ueber 44 px bis Frame 55*/
 const PAT=[
- {e:[['k',0]],a:[[0,0]],d:0,w:6},{e:[['s',0]],a:[[0,0]],d:0,w:5},{e:[['p',0]],a:[[0,0]],d:0,w:3},
- {e:[['k',0],['s',50]],a:[[0,0],[1,1]],d:0,w:3},{e:[['k',0],['k',50]],a:[[0,0],[1,1]],d:0,w:3},
- {e:[['s',0],['s',30]],a:[[0,1]],d:1,w:2},{e:[['s',0],['k',44]],a:[[1,1],[0,0]],d:1,w:3},
- {e:[['t',0]],a:[[0,0]],d:1,w:3,m:2},{e:[['p',0],['k','+']],a:[[0,1]],d:1,w:3},
- {e:[['k',0],['k','+'],['k','+']],a:[[0,2]],d:2,w:3},{e:[['k',0],['k',44],['k',88]],a:[[0,0],[1,1],[2,2]],d:2,w:2},
- {e:[['k',0],['s',50],['k',96]],a:[[0,0],[2,2],[1,1]],d:2,w:3},{e:[['k',0],['t','+']],a:[[0,1]],d:2,w:2,m:2},
- {e:[['k',0],['t','+'],['k','+']],a:[[0,2]],d:3,w:2,m:2},{e:[['s',0],['k',44],['s',96]],a:[[1,1],[0,0],[2,2]],d:3,w:2},
- {e:[['p',0],['k','+'],['s',62]],a:[[0,1],[2,2]],d:3,w:2},{e:[['k',0],['s',50],['k',96],['s',146]],a:[[0,0],[2,2]],d:4,w:2},
- {e:[['k',0],['k','+'],['k','+'],['k','+']],a:[[0,3]],d:4,w:2}];
-let patN=0,patL=-1,patR=0,arcId=0,ARC={};
-const h1=t=>12.5*t-.3*t*t,h2=t=>t<10?h1(t):95+h1(t-10);/*Sprunghoehe nach t Frames (einfach / Doppelsprung nach 10 Frames)*/
-function patSpawn(){const s0=gst(),D=Math.min(4,s0+Math.min(lap,2)*2),early=!(tj&&td)||ff()<GD+300;
- /*Ruhephase: nach 5 Bausteinen oder oft nach schweren, mit lockerer Snack-Spur am Boden*/
- if(!early&&patN>=2&&(patN>=7||patR&&Math.random()<.2)){patN=0;patR=0;spawnT+=40+(Math.random()*30|0);
-  if(Math.random()<.3){const s=SNACK[Math.floor(Math.random()*3)];for(let k=0;k<4;k++)items.push({s,x:W+60+k*46,y:G-(k%2?62:40)})}return true}
- const wt=q=>q.w*(q.e.length===1?Math.max(.45,1-D*.14):1),ok=PAT.filter((q,i)=>i!==patL&&q.d<=D&&(q.m===undefined||s0<=q.m)&&(!early||q.e.length===1));
- let r=Math.random()*ok.reduce((u,q)=>u+wt(q),0),P=ok[0];for(const q of ok){r-=wt(q);if(r<=0){P=q;break}}
- patL=PAT.indexOf(P);patN++;patR=P.d>=2;
- const es=estSp(),b=(W+20-p.x)/es,E=[];
- for(const[t,a]of P.e){const mv=(t==='k'||t==='t')&&s0===1?1.4:0,vo=es+mv,w=t==='p'?80:t==='s'?64:44,pr=E[E.length-1],at=a==='+'?pr.at+pr.w/pr.vo:a,ox=p.x+(b+at)*vo;
+ {e:[['k',0]],d:0,w:6},{e:[['s',0]],d:0,w:5},{e:[['p',0]],d:0,w:3},
+ {e:[['k',0],['s',50]],d:0,w:3},{e:[['k',0],['k',50]],d:0,w:3},
+ {e:[['s',0],['s',30]],d:1,w:2},{e:[['s',0],['k',44]],d:1,w:3},
+ {e:[['t',0]],d:1,w:3,m:2},{e:[['p',0],['k','+']],d:1,w:3},
+ {e:[['k',0],['k','+'],['k','+']],d:2,w:3},{e:[['k',0],['k',44],['k',88]],d:2,w:2},
+ {e:[['k',0],['s',50],['k',96]],d:2,w:3},{e:[['k',0],['t','+']],d:2,w:2,m:2},
+ {e:[['k',0],['t','+'],['k','+']],d:3,w:2,m:2},{e:[['s',0],['k',44],['s',96]],d:3,w:2},
+ {e:[['p',0],['k','+'],['s',62]],d:3,w:2},{e:[['k',0],['s',50],['k',96],['s',146]],d:4,w:2},
+ {e:[['k',0],['k','+'],['k','+'],['k','+']],d:4,w:2}];
+const PTG=.9,PJ=5;
+let patN=0,patL=-1,patR=0;
+/*gibt das erste neue Hindernis zurueck (fuer den Snack darueber), in der Ruhephase null*/
+function patSpawn(){const s0=gst(),ft=ff()-GD,D=Math.min(4,s0+(ft>0&&ft%1500>=750?1:0)+Math.min(lap,2)*2),early=!(tj&&td)||ff()<GD+300;
+ /*Ruhephase: nach 10 Bausteinen oder selten nach schweren*/
+ if(!early&&patN>=2&&(patN>=10||patR&&Math.random()<.1)){patN=0;patR=0;spawnT+=40+(Math.random()*30|0);return null}
+ let P;
+ if(!early&&Math.random()<.3){const r=Math.random();P={e:[[r<.4?'s':r<.75?'k':'p',0]],d:0}}/*echter Einzel-Zufall wie frueher*/
+ else{const wt=q=>q.w*(q.e.length===1?Math.max(.45,1-D*.14):1),ok=PAT.filter((q,i)=>i!==patL&&q.d<=D&&(q.m===undefined||s0<=q.m)&&(!early||q.e.length===1));
+  let r=Math.random()*ok.reduce((u,q)=>u+wt(q),0);P=ok[0];for(const q of ok){r-=wt(q);if(r<=0){P=q;break}}
+  patL=PAT.indexOf(P);patN++;patR=P.d>=2}
+ /*Abfolge variieren: engere Abstaende mit Zufall, Spiegeln, Anhaengsel*/
+ let po=0,pn=0;const L=P.e.map(([t,a])=>{if(a==='+'||a===0)return[t,a];const g=a-po;po=a;pn+=g>=40?Math.round(g*PTG)+Math.round((Math.random()*2-1)*PJ):g;return[t,pn]});
+ if(L.every(([t,a],i)=>t!=='t'&&t!=='p'&&a!=='+'&&(i===0||a-L[i-1][1]>=36))&&Math.random()<.5)for(const x of L)x[0]=x[0]==='k'?'s':x[0]==='s'?'k':x[0];
+ if(!early&&D>=2&&L.length<4&&L[L.length-1][0]!=='p'&&Math.random()<.15)L.push([Math.random()<.5?'k':'s','>',42+(Math.random()*12|0)]);
+ const es=estSp(),b=(W+20-p.x)/es,E=[];let o0=null;
+ for(const[t,a,g]of L){const mv=(t==='k'||t==='t')&&s0===1?1.4:0,vo=es+mv,w=t==='p'?80:t==='s'?64:44,pr=E[E.length-1],at=a==='+'?pr.at+pr.w/pr.vo:a==='>'?pr.at+g:a,ox=p.x+(b+at)*vo,n0=obs.length;
   if(t==='s')obs.push({t:'sign',x:ox,y:G-96,w:64,h:46,v:s0});else if(t==='p')obs.push({t:'puddle',x:ox,w:80,h:10,v:s0});
   else{obs.push({t:'crate',x:ox,w:44,h:44,v:s0,pi:t==='k'&&s0===0&&Math.random()<.4});if(t==='t')obs.push({t:'crate',x:ox,w:44,h:44,v:s0,pi:s0===0&&Math.random()<.5,lf:44})}
-  E.push({t,at,w,vo,mv})}
+  if(!o0)o0=obs[n0];E.push({t,at,w,vo,mv})}
  spawnT+=Math.round(E[E.length-1].at);
- /*SNACK-BOEGEN: liegen auf der idealen Sprungbahn (bei Schildern als Rutsch-Spur), alle erwischt = Perfekt-Bonus (arcGot)*/
- if(Math.random()>.22)return false;
- [P.a[0]].forEach(([i,j])=>{const A=E[i],B=E[j],id=++arcId,s=SNACK[Math.floor(Math.random()*3)],ev=B.mv,vi=es+ev;
-  const add=(t,y)=>{items.push({s,x:p.x+(b+t)*vi,y,ag:id,ev});ARC[id]=(ARC[id]||0)+1};
-  if(A.t==='s'){for(let k=i;k<=j;k++){const e=E[k];for(const d of(i===j?[-46,0,46]:[0]))add(e.at+(e.w/2+d)/e.vo,G-22)}return}
-  const tc=(A.at+B.at+B.w/B.vo)/2,dur=B.at+B.w/B.vo-A.at+16/es;
-  if(dur<=26){const n=3,dd=Math.max(j>i?11:9,46/vi);for(let k=0;k<n;k++){const dl=(k-(n-1)/2)*dd;add(tc+dl,G-31-h1(20.83+dl))}}
-  else for(let k=0;k<4;k++){const tt=10+k*12;add(tc-29.7+tt,G-31-h2(tt))}});
- return true}
-function arcGot(i){if(ARC[i.ag]===undefined||--ARC[i.ag]>0)return;delete ARC[i.ag];const g=20*mult();score+=g;msg=TXT.perfect+' +'+g;flash=46;
- FT.push({x:p.x+30,y:p.y-100,t:60,s:TXT.perfect+' +'+g,c:'#ffd23c'});au.sfx('combo',3);burst(p.x,p.y-40,'#ffd23c')}
+ return o0}
 function spawn(){
  if(gst()===1&&Math.random()<.22&&!obs.some(o=>o.t!=='puddle'&&o.x>W-220)){obs.push({t:'train',x:W+300,w:160,h:56,v:1});for(let k=0;k<3;k++)items.push({s:SNACK[k],x:W+334+k*46,y:G-112-(k===1?14:0),tr:1});spawnT+=40;return}
- const _n0=items.length,_bow=patSpawn();
+ const _n0=items.length,o0=patSpawn();
  if(Math.random()<.07&&!items.some(i=>i.s===SNACK[4]&&!i.got))items.push({s:SNACK[4],x:W+170+Math.random()*80,y:G-50-Math.random()*80});
- if(!_bow&&Math.random()<.45){const s=SNACK[Math.random()<.2?3:Math.floor(Math.random()*3)];items.push({s,x:W+120+Math.random()*120,y:G-40-Math.random()*90})}
- for(let k=_n0;k<items.length;k++){const it=items[k];if(it.ag)continue;for(let n=0;n<4;n++){let moved=false;for(const o of obs){if(o.t==='puddle')continue;const oy=o.y!==undefined?o.y:G-o.h-(o.lf||0);if(it.x+26>o.x-14&&it.x-26<o.x+o.w+14&&it.y+26>oy-14&&it.y-26<oy+o.h+14){it.x=o.x+o.w+44;moved=true}}if(!moved)break}}
+ /*Snacks wie frueher: 62 % ein Snack, oft als Sprung-Belohnung ueber der ersten Kiste/Pfuetze*/
+ if(Math.random()<.62){
+  if(o0&&o0.v!==1&&(o0.t==='crate'||o0.t==='puddle')&&Math.random()<.55){const s=Math.random()<.5?SNACK[3]:SNACK[0];
+   items.push(o0.t==='crate'?{s,x:o0.x+22,y:G-140}:{s,x:o0.x+40,y:G-110})}
+  else{const s=SNACK[Math.random()<.2?3:Math.floor(Math.random()*3)];items.push({s,x:W+120+Math.random()*120,y:G-40-Math.random()*90})}}
+ for(let k=_n0;k<items.length;k++){const it=items[k];for(let n=0;n<4;n++){let moved=false;for(const o of obs){if(o.t==='puddle')continue;const oy=o.y!==undefined?o.y:G-o.h-(o.lf||0);if(it.x+26>o.x-14&&it.x-26<o.x+o.w+14&&it.y+26>oy-14&&it.y-26<oy+o.h+14){it.x=o.x+o.w+44;moved=true}}if(!moved)break}}
 }
 function hit(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
 let rp=0;
@@ -184,9 +185,9 @@ score+=speed*.08;
  if(slowT>0){slowT--;if(frame%2===0)PT.push({x:p.x+Math.random()*26-13,y:p.y-(p.duck&&p.y>=G?10:12)-Math.random()*44,vx:0,vy:.3+Math.random()*.6,l:30,c:'rgba(100,185,255,1)',r:2.2+Math.random()*2})}if(inv>0)inv--;
  if(dogOut){dogOut.t++;dogOut.x-=speed+2.5+dogOut.t*.12;if(dogOut.x<-90||dogOut.t>120)dogOut=null}
  if(chase!==null){{const ahead=obs.some(o=>o.t==='sign'&&o.x+o.w>p.x-40&&o.x<p.x+speed*85+60);if(ahead&&chase<20&&++dogHold<=120)chase=Math.min(chase+1.05,19.9);else chase+=1.05}if(chase!==null){if(chase>=20&&chase-1.05<20)au.sfx('bark');if(chase>=p.x-20){chase=null;slowT=0;if(p.y<G-14){dogOut={x:p.x-20,t:0};FT.push({x:p.x,y:p.y-90,t:50,s:'Ausgewichen!',c:'#ffffff'});au.sfx('jump',2)}else if(hurt())return}}}
- for(const i of items){i.x-=speed;if(i.tr)i.x-=3.2*speed/baseSp;if(i.ev)i.x-=i.ev*speed/baseSp;if(magT>0&&!i.got){const dx=p.x-i.x,dy=p.y-30-i.y;if(Math.hypot(dx,dy)<230){i.x+=dx*.16;i.y+=dy*.16}}
-  if(!i.got&&hit(box,{x:i.x-26,y:i.y-26,w:52,h:52})){i.got=1;coins++;combo++;qGot(i.s.n);if(i.s.n==='Feuer-Nudeln')noodleFx();burst(i.x,i.y,i.s.c);au.sfx('coin',combo,i.s.n==='Plüsch');const gain=i.s.pts*mult()*(i.sp?3:1);score+=gain;FT.push({x:i.x,y:i.y-14,t:44,s:'+'+gain,c:i.sp?'#ffd86a':'#ffffff'});msg=i.s.n+' +'+gain+(mult()>1?'  (x'+mult()+')':'');flash=30;if(i.sp){au.sfx('combo',5);snackFx(i.s.n)}if(i.s.n==='Chili-Chips'&&++fire%5===0){msg='Scharfe Chili-Chips! 🔥 Doppelte Punkte';score+=50;au.sfx('chili');shk=Math.max(shk,7);vib([30,40,30,40,60])}if(i.ag)arcGot(i)}}
- for(const i of items)if(i.x<=-40&&!i.got){if(i.ag)delete ARC[i.ag];else combo=0}
+ for(const i of items){i.x-=speed;if(i.tr)i.x-=3.2*speed/baseSp;if(magT>0&&!i.got){const dx=p.x-i.x,dy=p.y-30-i.y;if(Math.hypot(dx,dy)<230){i.x+=dx*.16;i.y+=dy*.16}}
+  if(!i.got&&hit(box,{x:i.x-26,y:i.y-26,w:52,h:52})){i.got=1;coins++;combo++;qGot(i.s.n);if(i.s.n==='Feuer-Nudeln')noodleFx();burst(i.x,i.y,i.s.c);au.sfx('coin',combo,i.s.n==='Plüsch');const gain=i.s.pts*mult()*(i.sp?3:1);score+=gain;FT.push({x:i.x,y:i.y-14,t:44,s:'+'+gain,c:i.sp?'#ffd86a':'#ffffff'});msg=i.s.n+' +'+gain+(mult()>1?'  (x'+mult()+')':'');flash=30;if(i.sp){au.sfx('combo',5);snackFx(i.s.n)}if(i.s.n==='Chili-Chips'&&++fire%5===0){msg='Scharfe Chili-Chips! 🔥 Doppelte Punkte';score+=50;au.sfx('chili');shk=Math.max(shk,7);vib([30,40,30,40,60])}}}
+ for(const i of items)if(i.x<=-40&&!i.got)combo=0
  items=items.filter(i=>i.x>-40&&!i.got);
  if(!tj){if(tjAt&&frame>tjAt+60){tj=true;tutSave()}}
  else if(!td){tutNear=obs.some(o=>o.t==='sign'&&o.x<W-60&&o.x>p.x-30);if(p.duck&&p.y>=G&&tutNear&&!tdAt)tdAt=frame+1;if(tdAt&&frame>tdAt+50){td=true;tutNear=false;tutSave()}}
@@ -1428,25 +1429,24 @@ const QD=[['Straßenmusiker',0,'Chili-Chips'],['Pendler',1,'einen Drink'],['Angl
 function qGot(n){if(QQ.act&&!QQ.have&&!QQ.done&&SNACK[QQ.sn].n===n){QQ.have=1;au.sfx('combo',4)}}
 function lifeReset(){for(const k in CHS)delete CHS[k];QQ.k='';QQ.act=0;QQ.have=0;QQ.done=0}
 /* Items immer erreichbar: nahe Hindernissen werden Items so platziert, dass man sie im Sprung bzw. geduckt sicher einsammelt */
-function itemFix(){for(const it of items){if(it.got||it.tr||it.ag||it.x<W-20)continue;
+function itemFix(){for(const it of items){if(it.got||it.tr||it.x<W-20)continue;
  for(const o of obs){if(o.x<-100)continue;const L=o.x,R=o.x+o.w;let need=-1,lo=0;
   if(o.t==='crate'||o.t==='train'){if(it.x>L-40&&it.x<R+28*baseSp)need=o.h+(o.lf||0)+60}
   else if(o.t==='puddle'){if(it.x>L-30&&it.x<R+30)need=70}
   else if(o.t==='sign'){if(it.x>L-30&&it.x<R+30){it.y=G-22;continue}}
   if(need>0&&G-it.y<need)it.y=G-need}}}
-/*Snacks nie aufeinander: neue lose Snacks ruecken weiter (sonst weg), ein neuer Bogen auf einem anderen Snack faellt ganz weg*/
-function itemSep(i0){const ov=(a,b)=>a!==b&&!b.got&&!b.rm&&Math.abs(a.x-b.x)<44&&Math.abs(a.y-b.y)<44,bad=new Set();
+/*Snacks nie aufeinander: neue Snacks ruecken weiter (sonst weg)*/
+function itemSep(i0){const ov=(a,b)=>a!==b&&!b.got&&!b.rm&&Math.abs(a.x-b.x)<44&&Math.abs(a.y-b.y)<44;
  for(let k=i0;k<items.length;k++){const it=items[k];if(it.tr||it.got)continue;
-  if(it.ag){if(items.some((q,m)=>m<i0&&q.ag!==it.ag&&ov(it,q)))bad.add(it.ag);continue}
   for(let t=0;t<6&&items.some(q=>ov(it,q));t++)it.x+=46;if(items.some(q=>ov(it,q)))it.rm=1}
- for(const id of bad)delete ARC[id];items=items.filter(q=>!q.rm&&!bad.has(q.ag))}
+ items=items.filter(q=>!q.rm)}
 function estSp(){return Math.max(baseSp,Math.max(lap>0?7.2+Math.min(lap,6)*.55:0,SPD[gst()]+Math.min(lap,6)*.5+creep()))*1.05}
 const TRG=150,GMIN=36;function gapFix(n0,i0){const es=estSp(),TT=1-.55*Math.min(1,(lap+gst()/5)/2.6);const ta=o=>(o.x-p.x)/(es+(o.t==='crate'?[0,1.4,0,0,0][o.v|0]:0)+(o.t==='train'?3.2:0));const pr=[],cand=[0];
  for(let j=n0;j<obs.length;j++){const a=ta(obs[j]);for(let i=0;i<n0;i++){const o=obs[i];if(o.x<p.x-40)continue;const b=ta(o);const gf=Math.max(.75,Math.min(1,1-(es-5)*.1)),gp=Math.max(GMIN,Math.round(((obs[j].t==='train'||o.t==='train')?TRG:(obs[j].t==='puddle'&&o.t==='puddle')?120:84)*gf*TT));pr.push([a,b,gp]);cand.push(b+gp-a)}}
  /* kleinste Verschiebung finden, bei der die neuen Hindernisse zu KEINEM alten zu nah liegen (nicht nur ans Ende schieben und dabei in ein anderes hineinlaufen) */
  let d=cand.filter(c=>c>=0).sort((u,v)=>u-v).find(c=>pr.every(([a,b,gp])=>Math.abs(a+c-b)>=gp-1e-6));if(d===undefined)d=Math.max(...cand);
  if(d*(es+1.4)>700&&obs.length>n0){obs.length=n0;items.length=i0;return}/*zu weit nach hinten geschoben: lieber weglassen, sonst staut sich eine Schlange und Koffer laufen ineinander*/
- if(d>0){for(let j=n0;j<obs.length;j++)obs[j].x+=d*(es+(obs[j].t==='crate'?[0,1.4,0,0,0][obs[j].v|0]:0)+(obs[j].t==='train'?3.2:0));for(let j=i0;j<items.length;j++)items[j].x+=d*(es+(items[j].tr?3.2:0)+(items[j].ev||0))}}
+ if(d>0){for(let j=n0;j<obs.length;j++)obs[j].x+=d*(es+(obs[j].t==='crate'?[0,1.4,0,0,0][obs[j].v|0]:0)+(obs[j].t==='train'?3.2:0));for(let j=i0;j<items.length;j++)items[j].x+=d*(es+(items[j].tr?3.2:0))}}
 {const _sp=spawn;spawn=function(){const n0=obs.length,i0=items.length;_sp();gapFix(n0,i0);spSpawn();itemFix();itemSep(i0);itemFix();if(QQ.act&&!QQ.have&&!QQ.done&&Math.random()<.6){const it=items[items.length-1];if(it&&!it.got)it.s=SNACK[QQ.sn]}}}
 const el=(a,b,rx,ry,c,r)=>{x.fillStyle=c;x.beginPath();x.ellipse(a,b,rx,ry,r||0,0,7);x.fill()};
 const rc=(a,b,w,h,c)=>{x.fillStyle=c;x.fillRect(a,b,w,h)};
