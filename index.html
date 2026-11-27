@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-27c',
+ ver:'v2026-11-27d',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
@@ -887,7 +887,7 @@ function draw(){
  {const hb=x.createLinearGradient(0,0,0,40);hb.addColorStop(0,'#3a2418');hb.addColorStop(1,'#1f120c');rr(0,0,W,40,0,hb);const gb=x.createLinearGradient(0,0,W,0);gb.addColorStop(0,'#b8841c');gb.addColorStop(.5,'#ffd86a');gb.addColorStop(1,'#b8841c');x.fillStyle=gb;x.fillRect(0,38,W,3);x.shadowColor='rgba(0,0,0,.6)';x.shadowBlur=3;x.shadowOffsetY=1}
  x.font='bold 18px Trebuchet MS,sans-serif';x.textAlign='left';x.fillStyle='#f6ead6';x.fillText('Punkte '+Math.floor(score),14,26);
  x.textAlign='center';x.fillStyle='#e0a82e';x.fillText('Snacks '+coins+(mult()>1?'  x'+mult():''),W/2,26);{const cm=mult(),fr=cm>=5?1:(combo%3)/3;rr(W/2-60,31,120,5,2,'#140d0b');if(fr>0)rr(W/2-60,31,120*fr,5,2,cm>=5?(frame%10<5?'#ffd23c':'#fff3a8'):'#e0a82e')}x.textAlign='right';x.fillStyle='#f6ead6';x.fillText('Rekord '+Math.floor(best),W-14,26);x.shadowBlur=0;x.shadowOffsetY=0;
- for(let k=0;k<Math.max(3,lives);k++){const on=k<lives,pu=on&&lives===1?1+Math.sin(frame*.25)*.12:1;x.save();x.translate(24+k*26,60);x.scale(pu,pu);x.translate(-(24+k*26),-60);x.shadowColor='rgba(0,0,0,.5)';x.shadowBlur=4;x.shadowOffsetY=2;heart(24+k*26,60,10,on?'#e8203f':'rgba(20,13,11,.45)');x.shadowColor='transparent';if(on){x.fillStyle='rgba(255,255,255,.55)';x.beginPath();x.ellipse(24+k*26-5,57,2.5,1.6,-.6,0,7);x.fill()}x.restore()}
+ for(let k=0;k<Math.max(3,lives);k++){const on=k<lives,pu=on&&lives===1?1+Math.sin(frame*.25)*.12:1;x.save();x.translate(24+k*26,60);x.scale(pu,pu);x.translate(-(24+k*26),-60);heart(24+k*26,62,10,'rgba(0,0,0,.35)');heart(24+k*26,60,10,on?'#e8203f':'rgba(20,13,11,.45)');if(on){x.fillStyle='rgba(255,255,255,.55)';x.beginPath();x.ellipse(24+k*26-5,57,2.5,1.6,-.6,0,7);x.fill()}x.restore()}
  effHud();if(flash>0&&st==='play'){x.globalAlpha=Math.min(1,flash/10);x.fillStyle='#fff';x.strokeStyle='#2b1a12';x.lineWidth=4;x.font='bold 24px Georgia,serif';x.textAlign='center';x.strokeText(msg,W/2,160);x.fillText(msg,W/2,160);x.globalAlpha=1}
  if(skW>0){x.save();x.globalAlpha=skW/22*.85;x.fillStyle='#fff';x.fillRect(0,41,W,H);x.restore()}
  if(sbn>0&&st==='play'){const T=210-sbn,al=T<20?T/20:sbn<35?sbn/35:1,e=1-Math.pow(1-Math.min(1,T/34),3),off=(1-e)*160,by=48,bh=74;
@@ -988,8 +988,8 @@ const quant=(c)=>{return;const id=c.getImageData(0,0,LOW,LOH),d=id.data,q=17;for
 const rec=k=>function(t,a,b){if(paused&&!PUI&&a>=240&&a<=660&&b>=52&&b<=378)return;TX.push({L:TL,k,t,a,b,font:x.font,fs:x.fillStyle,ss:x.strokeStyle,lw:x.lineWidth,al:x.textAlign,ga:x.globalAlpha,m:x.getTransform()})};
 const FX=document.createElement('canvas');FX.width=900;FX.height=400;{const f=FX.getContext('2d');const vg=f.createRadialGradient(450,210,220,450,200,580);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(10,5,3,.38)');f.fillStyle=vg;f.fillRect(0,0,900,400)}
 const loB=document.createElement('canvas');loB.width=LOW;loB.height=LOH;const lxb=loB.getContext('2d');
-/*SCHARF: Zeichenflaeche in Bildschirmaufloesung (Faktor K, max. KM=2); KM sinkt bei Ruckeln (Schnitt >24 ms)*/addEventListener('resize',()=>kW=0);
-function resK(){const n=performance.now();if(kT&&st==='play'&&!paused){const d=n-kT;if(d<100){kS+=d;kN++;if(kN>=120){if(kS/kN>24&&KM>1){KM=Math.max(1,KM-.5);kW=0}kS=kN=0}}}kT=n;
+/*SCHARF: Zeichenflaeche in Bildschirmaufloesung (Faktor K, max. KM=2); KM sinkt bei Ruckeln (Schnitt >19 ms)*/addEventListener('resize',()=>kW=0);
+function resK(){const n=performance.now();if(kT&&st==='play'&&!paused){const d=n-kT;if(d<100){kS+=d;kN++;if(kN>=120){if(kS/kN>19&&KM>1){KM=Math.max(1,KM-.5);kW=0}kS=kN=0}}}kT=n;
  if(!kW)kW=cv.clientWidth||900;const k=Math.max(1,Math.min(KM,Math.round(kW*(window.devicePixelRatio||1)/900*4)/4));
  if(k!==K){K=k;LOW=Math.round(900*K);LOH=Math.round(400*K);for(const c of[cv,lo,lo2,loB]){c.width=LOW;c.height=LOH}}}
 const _bgOrig=bg;bg=function(){_bgOrig();bgFx();lxb.imageSmoothingEnabled=true;lxb.clearRect(0,0,LOW,LOH);lxb.drawImage(cv,0,0);x.clearRect(0,0,900,400);TL=2};
@@ -1628,7 +1628,7 @@ let shA=0;
 function shieldFx(cy){shA=Math.min(20,shA+1);const e=shA/20,R=(42+Math.sin(frame*.15)*2)*(.6+.4*e);
  x.save();x.globalAlpha=e;
  const g=x.createRadialGradient(p.x,cy,R*.5,p.x,cy,R);g.addColorStop(0,'rgba(127,212,255,.04)');g.addColorStop(1,'rgba(127,212,255,.4)');x.fillStyle=g;x.beginPath();x.arc(p.x,cy,R,0,7);x.fill();
- x.shadowColor='#7fd4ff';x.shadowBlur=14;x.strokeStyle='rgba(200,240,255,.95)';x.lineWidth=3;x.beginPath();x.arc(p.x,cy,R,0,7);x.stroke();x.shadowBlur=0;
+ x.beginPath();x.arc(p.x,cy,R,0,7);x.strokeStyle='rgba(127,212,255,.18)';x.lineWidth=14;x.stroke();x.strokeStyle='rgba(127,212,255,.35)';x.lineWidth=8;x.stroke();x.strokeStyle='rgba(200,240,255,.95)';x.lineWidth=3;x.stroke();
  x.strokeStyle='rgba(200,240,255,.35)';x.lineWidth=1.5;x.beginPath();
  for(let k=0;k<=6;k++){const an=k/6*6.283+frame*.02,px=p.x+Math.cos(an)*R*.62,py=cy+Math.sin(an)*R*.62;k?x.lineTo(px,py):x.moveTo(px,py)}x.stroke();
  x.strokeStyle='rgba(255,255,255,.9)';x.lineWidth=3;x.lineCap='round';x.beginPath();x.arc(p.x,cy,R-4,frame*.05,frame*.05+.8);x.stroke();
@@ -1942,7 +1942,10 @@ function seasonLayer(){{const nw=performance.now();if(!paused&&seaL)seaT+=Math.m
 {const _ds=draw;draw=function(){_ds();seasonLayer()}}
 /*/SEASONS*/
 let lastT=0,acc=0;const STEP=1000/60;
-function loop(t){pad();acc+=Math.min(t-lastT,100);lastT=t;while(acc>=STEP){acc-=STEP;if(st==='play'&&!paused&&!shopOn){if(cd>0){cd--;if(cd>0&&cd%40===0)au.sfx('tick')}else if(frz>0)frz--;else if(sm>0){sm--;slAcc+=.3+.7*Math.pow(Math.abs(sm-18)/18,2);if(slAcc>=1){slAcc-=1;update()}}else update()}}if(ROT.matches&&st==='play'&&!paused)setPause(true,true);draw();btnUpd();requestAnimationFrame(loop)}
+/*?fps=1: Messanzeige (Bilder/s, laengster Abstand, K) fuer Ruckel-Tests am Handy*/
+const FPSD=/[?&]fps=1/.test(location.search)?(()=>{const d=document.createElement('div');d.style.cssText='position:fixed;left:4px;top:4px;z-index:999;font:12px monospace;color:#0f0;background:rgba(0,0,0,.65);padding:2px 5px;pointer-events:none';document.body.appendChild(d);return d})():null;let fpsN=0,fpsT=0,fpsW=0;
+/*Takt: Toleranz .85*STEP gegen Zitter-Abstaende um 16,7 ms (sonst 0/2 Schritte im Wechsel); gezeichnet wird nur nach einem Schritt (120 Hz -> 60 Bilder/s statt doppelter Last)*/
+function loop(t){pad();const dt=t-lastT;acc+=Math.min(dt,100);lastT=t;let nS=0;while(acc>=STEP*.85){acc-=STEP;nS++;if(st==='play'&&!paused&&!shopOn){if(cd>0){cd--;if(cd>0&&cd%40===0)au.sfx('tick')}else if(frz>0)frz--;else if(sm>0){sm--;slAcc+=.3+.7*Math.pow(Math.abs(sm-18)/18,2);if(slAcc>=1){slAcc-=1;update()}}else update()}}if(ROT.matches&&st==='play'&&!paused)setPause(true,true);if(nS){draw();if(FPSD){fpsN++;if(dt<1000)fpsW=Math.max(fpsW,dt);if(t-fpsT>=1000){FPSD.textContent=fpsN+' fps · max '+Math.round(fpsW)+' ms · K '+K;fpsN=0;fpsW=0;fpsT=t}}}btnUpd();requestAnimationFrame(loop)}
 requestAnimationFrame(loop);
 /*GRUNDAUSSTATTUNG: Version mit versteckten Credits, Zurueck-Taste, Wake Lock, Service-Worker*/
 document.getElementById('rotT').textContent=TXT.rot;
