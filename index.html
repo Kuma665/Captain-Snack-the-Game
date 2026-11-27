@@ -14,14 +14,14 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-27b',
+ ver:'v2026-11-27c',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
  err:'Fehler',line:'Zeile',
  recNew:'Neuer Rekord!',recSay:'Arrr! Rekord geknackt!',
  squOn:'Squishy! Spring auf Kisten – Boing!',squBo:'Boing!',squOff:'Squishy vorbei!',squHud:'\u{1F36E} Squishy',
- near:'Knapp!'
+ near:'Knapp!',dogDodge:'Ausgewichen!',dogAgain:'Er gibt nicht auf!',dogSniff:'Ein Hund wittert dich!'
 };
 /*HOCHFORMAT: Spiel gesperrt (Dreh-Hinweis deckt alles ab, laufendes Spiel pausiert)*/
 const ROT=matchMedia('(orientation:portrait)');
@@ -99,8 +99,8 @@ function hurt(){if(inv>0||fireT>0)return false;if(shield){shield=false;inv=70;au
 function heart(a,b,s,c){x.fillStyle=c;x.beginPath();x.moveTo(a,b+s*.9);x.bezierCurveTo(a-s*1.3,b-s*.1,a-s*.7,b-s,a,b-s*.35);x.bezierCurveTo(a+s*.7,b-s,a+s*1.3,b-s*.1,a,b+s*.9);x.fill()}
 let sm=0,nmCd=0,lm=1,bump=0;let slowT=0,chase=null;let spawnT=90;let combo=0;const mult=()=>Math.min(1+Math.floor(combo/3),5);
 const SNACK=[{n:'Chili-Chips',c:'#7a1fa2',pts:10},{n:'Drink',c:'#d11a2a',pts:10},{n:'Bärchen',c:'#2fbf4a',pts:10},{n:'Plüsch',c:'#ff8fc0',pts:25},{n:'Feuer-Nudeln',c:'#ff3b5c',pts:20},{n:'Squishy',c:'#ff8fcf',pts:15}];
-function reset(){duckS=0;skForce=0;lifeReset();fireT=fireCd=hiJ=magT=squT=waveT=waveCd=0;shield=false;lifeBought=0;shBought=0;shopOn=false;pendShop=false;shopWarn=0;lap=0;lapOff=0;sumS=-1;sumDone=false;lapNow=false;SB=[[-1e9,0]];skF=false;skB=0;skW=0;lastSt=0;ws0=ws;tjAt=0;tdAt=0;tutNear=false;p={x:110,y:G,vy:0,j:0,duck:false};obs=[];items=[];speed=6;score=0;coins=0;combo=0;spawnT=90;patN=0;patL=-1;patR=0;slowT=0;sm=0;nmCd=0;lm=1;bump=0;PT=[];chase=null;lives=3;inv=0;baseSp=4.2;buf=0;slT=0;dogOut=null;slAcc=0;cmbSp=1;frame=0;fire=0;dk=false;shk=0;frz=0;cd=0;st='play';au.start();au.sfx('start')}
-let buf=0,slT=0,dogHold=0,dogOut=null;
+function reset(){duckS=0;skForce=0;lifeReset();fireT=fireCd=hiJ=magT=squT=waveT=waveCd=0;shield=false;lifeBought=0;shBought=0;shopOn=false;pendShop=false;shopWarn=0;lap=0;lapOff=0;sumS=-1;sumDone=false;lapNow=false;SB=[[-1e9,0]];skF=false;skB=0;skW=0;lastSt=0;ws0=ws;tjAt=0;tdAt=0;tutNear=false;p={x:110,y:G,vy:0,j:0,duck:false};obs=[];items=[];speed=6;score=0;coins=0;combo=0;spawnT=90;patN=0;patL=-1;patR=0;slowT=0;sm=0;nmCd=0;lm=1;bump=0;PT=[];chase=null;lives=3;inv=0;baseSp=4.2;buf=0;slT=0;dogOut=null;dogN=0;dogR=0;dogD=0;slAcc=0;cmbSp=1;frame=0;fire=0;dk=false;shk=0;frz=0;cd=0;st='play';au.start();au.sfx('start')}
+let buf=0,slT=0,dogHold=0,dogOut=null,dogN=0,dogR=0,dogD=0;
 function jump(){au.init();if(paused||shopOn||(cd>0&&st==='play'))return;if(st!=='play'){reset();return}if(!tj&&!tjAt)tjAt=frame+1;if(p.j<2){const gr=p.y>=G-1;p.vy=-12.5;p.j++;sq=-.15;au.sfx('jump',p.j);if(p.j===2&&!gr)airPuff();else if(gr)puff(4,1.6,'rgba(214,204,188,.8)',3)}else buf=10}
 function cutJump(){if(st==='play'&&p.vy<-7)p.vy=-7}
 addEventListener('keydown',e=>{if(e.code==='KeyN'&&inGame())skipStage();if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();jump()}if(e.code==='ArrowDown'&&!paused&&!shopOn&&cd<=0)p.duck=true});
@@ -178,7 +178,7 @@ score+=speed*.08;
   if(o.t==='sign'&&!o.ck){if(p.duck&&p.y>=G&&box.x+box.w>o.x+6&&box.x<o.x+o.w-6){if(!o.dk&&!o.nm&&frame-dkAt<=6&&nmCd<=0&&inv<=0)nearMiss(o);o.dk=1}if(o.x+o.w<p.x-10){o.ck=1}}
   const ob={x:o.x+(o.t==='train'?4:6),y:o.t==='sign'?-2000:G-o.h-(o.lf||0),w:o.w-(o.t==='train'?8:12),h:o.t==='sign'?(G-50)+2000:o.h-(o.t==='puddle'?4:0)};
   if(o.t==='puddle'){ob.y=G-6;ob.h=6}
-  if(hit(box,ob)){if(squT>0&&(o.t==='crate'||o.t==='train')&&p.vy>0&&p.y-p.vy<=ob.y+10){squBo(o,ob);continue}if(o.t==='puddle'){if(!o.hit&&fireT<=0){o.hit=1;slowT=Math.min(slowT+150,220);au.sfx('splash');for(let k=0;k<26;k++)PT.push({x:p.x+Math.random()*30-15,y:G-4,vx:Math.random()*5-2.5,vy:-3-Math.random()*5,l:36,c:k%3?'rgba(130,195,255,.95)':'rgba(230,245,255,.95)',r:2+Math.random()*3});if(chase===null&&!pendShop){chase=-70;dogHold=0;au.sfx('bark')}msg='Nass! Deine Snacks duften – ein Hund wittert dich!';flash=60}}else if(inv<=0){o.x=-500;if(hurt())return}}
+  if(hit(box,ob)){if(squT>0&&(o.t==='crate'||o.t==='train')&&p.vy>0&&p.y-p.vy<=ob.y+10){squBo(o,ob);continue}if(o.t==='puddle'){if(!o.hit&&fireT<=0){o.hit=1;slowT=Math.min(slowT+150,220);au.sfx('splash');for(let k=0;k<26;k++)PT.push({x:p.x+Math.random()*30-15,y:G-4,vx:Math.random()*5-2.5,vy:-3-Math.random()*5,l:36,c:k%3?'rgba(130,195,255,.95)':'rgba(230,245,255,.95)',r:2+Math.random()*3});if(chase===null&&!pendShop){chase=-70;dogHold=0;dogN=gst()>=2?3:2;dogR=0;dogD=0;au.sfx('bark')}msg='Nass! Deine Snacks duften – ein Hund wittert dich!';flash=60}}else if(inv<=0){o.x=-500;if(hurt())return}}
   else if((o.t==='crate'||o.t==='train')&&!o.nm&&inv<=0){
    if(box.x+box.w>ob.x&&box.x<ob.x+ob.w){const g=ob.y-(box.y+box.h);
     if(g>=0&&g<=16){if(o.g===undefined||g<o.g)o.g=g;else if(g>o.g+1.5&&o.g<=13)nearMiss(o)}}
@@ -186,7 +186,7 @@ score+=speed*.08;
  obs=obs.filter(o=>o.x>-(o.t==='train'?240:100));
  if(slowT>0){slowT--;if(frame%2===0)PT.push({x:p.x+Math.random()*26-13,y:p.y-(p.duck&&p.y>=G?10:12)-Math.random()*44,vx:0,vy:.3+Math.random()*.6,l:30,c:'rgba(100,185,255,1)',r:2.2+Math.random()*2})}if(inv>0)inv--;
  if(dogOut){dogOut.t++;dogOut.x-=speed+2.5+dogOut.t*.12;if(dogOut.x<-90||dogOut.t>120)dogOut=null}
- if(chase!==null){{const ahead=obs.some(o=>o.t==='sign'&&o.x+o.w>p.x-40&&o.x<p.x+speed*85+60);if(ahead&&chase<20&&++dogHold<=120)chase=Math.min(chase+1.05,19.9);else chase+=1.05}if(chase!==null){if(chase>=20&&chase-1.05<20)au.sfx('bark');if(chase>=p.x-20){chase=null;slowT=0;if(p.y<G-14){dogOut={x:p.x-20,t:0};FT.push({x:p.x,y:p.y-90,t:50,s:'Ausgewichen!',c:'#ffffff'});au.sfx('jump',2)}else if(hurt())return}}}
+ if(chase!==null){if(dogR){chase-=3.2;if(chase<=-30){dogR=0;dogHold=0}}else{const ahead=obs.some(o=>o.t==='sign'&&o.x+o.w>p.x-40&&o.x<p.x+speed*85+60);if(ahead&&chase<20&&++dogHold<=120)chase=Math.min(chase+1.05,19.9);else chase+=1.05}if(chase!==null&&!dogR){if(chase>=20&&chase-1.05<20)au.sfx('bark');if(chase>=p.x-20){slowT=0;if(p.y<G-14){dogD++;FT.push({x:p.x,y:p.y-90,t:50,s:TXT.dogDodge,c:'#ffffff'});au.sfx('jump',2);if(--dogN>0)dogR=1;else{chase=null;dogOut={x:p.x-20,t:0}}}else{chase=null;if(hurt())return}}}}/*Hund greift dogN-mal an (2, ab Abschnitt 2 dreimal), faellt nach jedem Ausweichen zurueck (dogR) und kommt mit neuer Vorwarnung wieder*/
  for(const i of items){i.x-=speed;if(i.tr)i.x-=3.2*speed/baseSp;if(magT>0&&!i.got){const dx=p.x-i.x,dy=p.y-30-i.y;if(Math.hypot(dx,dy)<230){i.x+=dx*.16;i.y+=dy*.16}}
   if(!i.got&&hit(box,{x:i.x-26,y:i.y-26,w:52,h:52})){i.got=1;coins++;combo++;qGot(i.s.n);if(i.s.n==='Feuer-Nudeln')noodleFx();burst(i.x,i.y,i.s.c);au.sfx('coin',combo,i.s.n==='Plüsch');const gain=i.s.pts*mult()*(i.sp?3:1);score+=gain;FT.push({x:i.x,y:i.y-14,t:44,s:'+'+gain,c:i.sp?'#ffd86a':'#ffffff'});msg=i.s.n+' +'+gain+(mult()>1?'  (x'+mult()+')':'');flash=30;if(i.sp){au.sfx('combo',5);snackFx(i.s.n)}if(i.s.n==='Chili-Chips'&&++fire%5===0){msg='Scharfe Chili-Chips! 🔥 Doppelte Punkte';score+=50;au.sfx('chili');shk=Math.max(shk,7);vib([30,40,30,40,60])}}}
  for(const i of items)if(i.x<=-40&&!i.got)combo=0
@@ -1639,8 +1639,8 @@ function effDraw(){if(st!=='play')return;const cy=p.y-(p.duck&&p.y>=G?15:32);
  if(waveT>0){const f=p.x+(1-waveT/40)*(W-p.x+90),g=x.createLinearGradient(f-110,0,f,0);g.addColorStop(0,'rgba(120,200,255,0)');g.addColorStop(1,'rgba(120,200,255,.55)');x.fillStyle=g;x.fillRect(f-110,41,110,G-41);x.fillStyle='rgba(235,248,255,.85)';x.fillRect(f-3,41,3,G-41)}
  if(magT>0)magFx(cy);
  if(shield)shieldFx(cy);else shA=0;}
-function dogHud(){if(chase===null)return;const jump=chase>=20,pul=Math.sin(frame*.5);x.save();x.textAlign='center';x.lineJoin='round';
- if(!jump){x.font='bold 30px Georgia,serif';x.lineWidth=6;x.strokeStyle='#2b1a12';x.fillStyle='#fff';x.strokeText('Ein Hund wittert dich!',W/2,215);x.fillText('Ein Hund wittert dich!',W/2,215)}
+function dogHud(){if(chase===null)return;const jump=chase>=20&&!dogR,pul=Math.sin(frame*.5),wt=dogD?TXT.dogAgain:TXT.dogSniff;x.save();x.textAlign='center';x.lineJoin='round';
+ if(!jump){x.font='bold 30px Georgia,serif';x.lineWidth=6;x.strokeStyle='#2b1a12';x.fillStyle='#fff';x.strokeText(wt,W/2,215);x.fillText(wt,W/2,215)}
  else{const sc=1+pul*.06;x.translate(W/2,235);x.scale(sc,sc);x.font='bold 64px Georgia,serif';x.lineWidth=10;x.strokeStyle='#2b1a12';x.strokeText('SPRING!',0,0);x.fillStyle=pul>0?'#ffe45a':'#ff4a4a';x.fillText('SPRING!',0,0);x.font='bold 20px Trebuchet MS,sans-serif';x.lineWidth=5;x.strokeText('sonst beisst der Hund!',0,34);x.fillStyle='#fff';x.fillText('sonst beisst der Hund!',0,34)}
  x.restore()}
 /*Restzeit-Balken ueber dem Kopf (ueber Figur, Flammen und Glow gezeichnet, damit man sie immer sieht)*/
