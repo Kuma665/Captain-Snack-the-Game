@@ -14,7 +14,7 @@
 <script>
 /*TEXTE der Grundausstattung (Version, Credits, Fehleranzeige)*/
 const TXT={
- ver:'v2026-11-28',
+ ver:'v2026-11-28b',
  rot:'Bitte Handy quer halten',
  hintPause:'{ok} Wählen · {back} Weiterspielen',hintMenu:'{ok} OK · {back} Zurück',
  credits:'Ein Spiel von Arox Games · Entwickelt von Aram Simon\n♪ Musik: sapan4 – „EDM Gaming Music“ (Pixabay) · Original-Musik und Sounds im Spiel erzeugt',
@@ -1120,6 +1120,7 @@ draw=function(){
  if(shk>1){x.fillStyle='rgba(200,16,46,'+Math.min(.3,shk/80)+')';x.fillRect(0,0,900,400)}
  x.restore();
  if(EFB.length){x.save();x.setTransform(K,0,0,K,sx*K,sy*K);x.globalAlpha=1;for(const b of EFB)rr(...b);x.restore()}
+ if(itT>0){x.save();x.setTransform(K,0,0,K,sx*K,sy*K);x.globalAlpha=1;itToast(1);x.restore()}
  txt(1);
  if(st==='start'&&LOGO.complete&&LOGO.naturalWidth){x.save();x.setTransform(K,0,0,K,0,0);x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';const bob=Math.sin(performance.now()/600)*2,lw=400,lh=lw*LOGO.naturalHeight/LOGO.naturalWidth;x.drawImage(LOGO,W/2-lw/2,112+bob,lw,lh);
   {x.font="24px Rye,'Rockwell Extra Bold',Georgia,serif";try{x.letterSpacing='2px'}catch(e){}x.textAlign='left';const t1='THE ',t2='GAME',a1=x.measureText(t1).width,a2=x.measureText(t2).width,gx=W/2-(a1+a2)/2,gy=185+bob;x.lineJoin='round';x.lineWidth=4.2;x.strokeStyle='#360000';x.strokeText(t1,gx,gy);x.strokeText(t2,gx+a1,gy);const gr=x.createLinearGradient(0,gy-22,0,gy+2);gr.addColorStop(0,'#e51414');gr.addColorStop(1,'#8e0404');x.fillStyle=gr;x.fillText(t1,gx,gy);const g2=x.createLinearGradient(0,gy-22,0,gy+2);g2.addColorStop(0,'#ffcc5e');g2.addColorStop(1,'#e0962a');x.fillStyle=g2;x.fillText(t2,gx+a1,gy);try{x.letterSpacing='0px'}catch(e){}}
@@ -1344,11 +1345,13 @@ function itIco(e,cx,cy,s){const two=e.s2!==undefined;for(let k=0;k<(two?2:1);k++
 function itSeen(i){const s=SNACK.indexOf(i.s),e=TXT.itm.find(q=>(q.s===s||q.s2===s)&&!q.sp===!i.sp);if(!e||itS.includes(e.k))return;if(!i.sp&&!(tj&&td))return;/*normale Snacks erst nach dem Tutorial*/
  itS+=e.k;try{localStorage.setItem('csitm',itS)}catch(er){}itQ.push(e.k)}
 function itTick(){if(itT>0)itT--;else if(itQ.length&&!sbn){itK=itQ.shift();itT=IT_D}}
-function itToast(){if(itT<=0||st!=='play'||paused)return;const e=TXT.itm.find(q=>q.k===itK);if(!e)return;
- const u=IT_D-itT,s=.85+.15*ease(Math.min(1,u/12)),w=300,h=50,bx=W/2-w/2,by=92;x.save();x.globalAlpha=Math.min(1,u/8,itT/20);
- x.translate(W/2,by+h/2);x.scale(s,s);x.translate(-W/2,-(by+h/2));rr(bx,by,w,h,12,'rgba(20,13,11,.86)',e.sp?'#ffd86a':'rgba(246,234,214,.7)');
- itIco(e,bx+30,by+h/2,e.sp?.5:.6);x.textAlign='left';x.fillStyle='#ffd86a';x.font='bold 15px Trebuchet MS,sans-serif';x.fillText(TXT.itNew+' '+e.n,bx+60,by+21);
- x.fillStyle='#f6ead6';x.font='13px Trebuchet MS,sans-serif';x.fillText(e.d,bx+60,by+39);x.restore();x.textAlign='center'}
+/*bg=1: Kasten + Bild (nach dem Spielbild ungezoomt gezeichnet, wie EFB - sonst verrutscht der Kasten beim Combo-Zoom gegen den Text); bg=0: nur Text (per rec)*/
+function itToast(bg){if(itT<=0||st!=='play'||paused)return;const e=TXT.itm.find(q=>q.k===itK);if(!e)return;
+ const u=IT_D-itT,s=.85+.15*ease(Math.min(1,u/12)),w=300,h=46,bx=W/2-w/2,by=90;x.save();x.globalAlpha=Math.min(1,u/8,itT/20);
+ x.translate(W/2,by+h/2);x.scale(s,s);x.translate(-W/2,-(by+h/2));
+ if(bg){rr(bx,by,w,h,12,'rgba(20,13,11,.86)',e.sp?'#ffd86a':'rgba(246,234,214,.7)');itIco(e,bx+30,by+h/2,e.sp?.5:.6);x.restore();return}
+ x.textAlign='left';x.fillStyle='#ffd86a';x.font='bold 15px Trebuchet MS,sans-serif';x.fillText(TXT.itNew+' '+e.n,bx+60,by+19);
+ x.fillStyle='#f6ead6';x.font='13px Trebuchet MS,sans-serif';x.fillText(e.d,bx+60,by+36);x.restore();x.textAlign='center'}
 function itPage(){x.font='bold 14px Trebuchet MS,sans-serif';x.fillStyle='#8a1020';x.fillText(TXT.itL,311,124);x.fillText(TXT.itR,601,124);
  TXT.itm.forEach((e,i)=>{const c=e.sp?1:0,r=TXT.itm.filter(q=>!q.sp===!e.sp).indexOf(e),a=166+c*290,b=132+r*43;
   rr(a,b,280,38,9,e.sp?'rgba(224,168,46,.2)':'rgba(59,38,22,.09)');itIco(e,a+26,b+19,e.sp?.48:.58);
@@ -1810,7 +1813,7 @@ const FT=[];
 let _pm=1;
 function polish(){
  const mm=mult();if(mm<_pm&&_pm>=2&&st==='play'){au.sfx('cbreak');FT.push({x:W/2,y:130,t:60,s:'Combo weg!',c:'#ff6b6b'})}_pm=mm;
- if(mm>1&&st==='play'&&sbn<=0){x.save();x.textAlign='center';x.lineJoin='round';const pu=1+Math.sin(Date.now()/130)*.035*mm;x.translate(W/2,86);x.scale(pu,pu);x.font='bold '+(30+mm*6)+'px Georgia,serif';x.lineWidth=6;x.strokeStyle='rgba(30,14,6,.85)';const cc=['','','#ffd23c','#ffa51f','#ff6a2a','#ff3b3b'][mm];x.strokeText('x'+mm,0,0);x.fillStyle=cc;x.fillText('x'+mm,0,0);x.font='bold 12px Trebuchet MS,sans-serif';x.lineWidth=4;x.strokeText('COMBO',0,16);x.fillStyle='#fff';x.fillText('COMBO',0,16);if(mm<5){const fr=(combo%3)/3;rr(-30,24,60,5,2,'rgba(20,13,11,.7)');rr(-30,24,60*fr,5,2,cc)}x.restore()}
+ if(mm>1&&st==='play'&&sbn<=0&&itT<=0){x.save();x.textAlign='center';x.lineJoin='round';const pu=1+Math.sin(Date.now()/130)*.035*mm;x.translate(W/2,86);x.scale(pu,pu);x.font='bold '+(30+mm*6)+'px Georgia,serif';x.lineWidth=6;x.strokeStyle='rgba(30,14,6,.85)';const cc=['','','#ffd23c','#ffa51f','#ff6a2a','#ff3b3b'][mm];x.strokeText('x'+mm,0,0);x.fillStyle=cc;x.fillText('x'+mm,0,0);x.font='bold 12px Trebuchet MS,sans-serif';x.lineWidth=4;x.strokeText('COMBO',0,16);x.fillStyle='#fff';x.fillText('COMBO',0,16);if(mm<5){const fr=(combo%3)/3;rr(-30,24,60,5,2,'rgba(20,13,11,.7)');rr(-30,24,60*fr,5,2,cc)}x.restore()}
  const v=x.createRadialGradient(W/2,H/2,H*.42,W/2,H/2,W*.62);v.addColorStop(0,'rgba(10,6,20,0)');v.addColorStop(1,'rgba(10,6,20,.26)');x.fillStyle=v;x.fillRect(0,41,W,H-41);
  x.save();x.textAlign='center';x.font='bold 17px Trebuchet MS,sans-serif';x.lineWidth=3;x.strokeStyle='rgba(20,10,5,.75)';
  for(let k=FT.length-1;k>=0;k--){const f=FT[k];f.t--;f.y-=.8;if(f.t<=0){FT.splice(k,1);continue}x.globalAlpha=Math.min(1,f.t/18);if(!f.T)f.T=f.t+1;const ag=f.T-f.t,sc=ag<9?.4+.6*ease(ag/9):1;x.save();x.translate(f.x,f.y);x.scale(sc,sc);x.strokeText(f.s,0,0);x.fillStyle=f.c;x.fillText(f.s,0,0);x.restore()}
